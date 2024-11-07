@@ -98,16 +98,16 @@ After selecting this mode it will go directly to fan speed control. Change the f
 When we are in the main screen when turning the encoder it will change the media control volume. it will auto save the volume level after user input.
 
 ## TODO
-1: Get encoder working using ESP32Encoder library, Serial log the data
-2: Make documentation on how the process works to get the encoder working
-3: Start building menu structure with demo data, Serial log the data
-4: Make documentation on integrating a file system (menu system)
-5: Build out main screen (OLED integration)
-6: Integrate Wifi and TimeManager - display results
-7: Make documentation on OLED integration and how to pass data to the OLED
-8: Build menu screens with demo data
-9: Integrate LED and LED-inputs and LED-displays
-10: Integrate temperature and humidity sensor - display results
-11: Integrate Bluetooth and media controls - display result
-12: Integrate fan controls - display results
-13: Integrate quick change button to switch between LED and Media 
+1. Get encoder working using ESP32Encoder library, Serial log the data
+2. Make documentation on how the process works to get the encoder working
+3. Start building menu structure with demo data, Serial log the data
+4. Make documentation on integrating a file system (menu system)
+5. Build out main screen (OLED integration)
+6. Integrate Wifi and TimeManager - display results
+7. Make documentation on OLED integration and how to pass data to the OLED
+8. Build menu screens with demo data
+9. Integrate LED and LED-inputs and LED-displays
+1. Integrate temperature and humidity sensor - display results
+11. Integrate Bluetooth and media controls - display result
+12. Integrate fan controls - display results
+13. Integrate quick change button to switch between LED and Media 
