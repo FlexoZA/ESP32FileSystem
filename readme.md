@@ -110,4 +110,5 @@ When we are in the main screen when turning the encoder it will change the media
 1. Integrate temperature and humidity sensor - display results
 11. Integrate Bluetooth and media controls - display result
 12. Integrate fan controls - display results
-13. Integrate quick change button to switch between LED and Media 
+13. Integrate quick change button to switch between LED and Media
+14. Notification API
