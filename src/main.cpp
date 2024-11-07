@@ -1,20 +1,25 @@
 #include <Arduino.h>
+#include "input/InputManager.h"
 
-// put function declarations here:
-int myFunction(int, int);
+InputManager inputManager;
 
 void setup() {
-  Serial.begin(9600);
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    Serial.begin(9600);
+    delay(1000);
+
+    inputManager.begin();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println("Hello World!");
-}
+    inputManager.update();
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    // Example of using the input manager
+    Serial.print("Encoder value: ");
+    Serial.println(inputManager.getCurrentValue());
+
+    if (inputManager.isButtonPressed()) {
+        Serial.println("Button pressed! Current value: " + String(inputManager.getCurrentValue()));
+    }
+
+    delay(100);
 }
