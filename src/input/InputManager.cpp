@@ -6,8 +6,9 @@ InputManager::InputManager() :
     currentValue(50),
     lastButtonState(HIGH),
     buttonState(HIGH),
-    lastDebounceTime(0),
-    debounceDelay(50)
+    wasButtonPressed(false),
+    allowButtonPress(true),
+    lastDebounceTime(0)
 {
 }
 
@@ -28,9 +29,9 @@ void InputManager::update() {
 
     // Update the current value based on the encoder position
     if (position > 0) {
-        currentValue = min(maxValue, currentValue + 1); // Clockwise (more)
+        currentValue = min(maxValue, currentValue + 1);
     } else if (position < 0) {
-        currentValue = max(minValue, currentValue - 1); // Counterclockwise (less)
+        currentValue = max(minValue, currentValue - 1);
     }
 
     // Enforce the boundary limits
@@ -39,7 +40,7 @@ void InputManager::update() {
     // Reset the encoder position
     encoder.clearCount();
 
-    // Handle button press with debounce
+    // Handle button press with improved debounce
     int reading = digitalRead(ENCODER_SW_PIN);
 
     // If the button state has changed, reset the debounce timer
@@ -48,14 +49,24 @@ void InputManager::update() {
     }
 
     // Check if enough time has passed since the last state change
-    if ((millis() - lastDebounceTime) > debounceDelay) {
+    if ((millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
         // If the button state has changed
         if (reading != buttonState) {
             buttonState = reading;
+            
+            // Handle button press
+            if (buttonState == LOW && allowButtonPress) {
+                wasButtonPressed = true;
+                allowButtonPress = false;
+            }
+            // Handle button release
+            else if (buttonState == HIGH) {
+                wasButtonPressed = false;
+                allowButtonPress = true;
+            }
         }
     }
 
-    // Save the button reading for the next loop
     lastButtonState = reading;
 }
 
@@ -70,5 +81,13 @@ void InputManager::setLimits(int32_t min, int32_t max) {
 }
 
 bool InputManager::isButtonPressed() {
-    return (buttonState == LOW);
+    if (wasButtonPressed) {
+        wasButtonPressed = false;  // Clear the flag after reading
+        return true;
+    }
+    return false;
+}
+
+bool InputManager::isButtonReleased() {
+    return (buttonState == HIGH && lastButtonState == HIGH);
 }

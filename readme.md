@@ -98,8 +98,8 @@ After selecting this mode it will go directly to fan speed control. Change the f
 When we are in the main screen when turning the encoder it will change the media control volume. it will auto save the volume level after user input.
 
 ## TODO
-1. Get encoder working using ESP32Encoder library, Serial log the data
-2. Make documentation on how the process works to get the encoder working
+1. Get encoder working using ESP32Encoder library, Serial log the data (Completed)
+2. Make documentation on how the process works to get the encoder working (Completed)
 3. Start building menu structure with demo data, Serial log the data
 4. Make documentation on integrating a file system (menu system)
 5. Build out main screen (OLED integration)

@@ -1,3 +1,4 @@
+// InputManager.h
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
 
@@ -12,11 +13,12 @@ private:
     int32_t maxValue;
     int32_t currentValue;
     
-    // Button debounce variables
-    bool lastButtonState;
-    bool buttonState;
+    // Enhanced button handling variables
+    int lastButtonState;
+    int buttonState;
+    bool wasButtonPressed;
+    bool allowButtonPress;
     unsigned long lastDebounceTime;
-    unsigned long debounceDelay;
 
 public:
     InputManager();
@@ -25,6 +27,7 @@ public:
     int32_t getCurrentValue() const;
     void setLimits(int32_t min, int32_t max);
     bool isButtonPressed();
+    bool isButtonReleased();
 };
 
 #endif
