@@ -100,7 +100,7 @@ When we are in the main screen when turning the encoder it will change the media
 ## TODO
 1. Get encoder working using ESP32Encoder library, Serial log the data (Completed)
 2. Make documentation on how the process works to get the encoder working (Completed)
-3. Start building menu structure with demo data, Serial log the data
+3. Start building menu structure with demo data, Serial log the data (Completed)
 4. Make documentation on integrating a file system (menu system)
 5. Build out main screen (OLED integration)
 6. Integrate Wifi and TimeManager - display results

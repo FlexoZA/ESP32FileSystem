@@ -1,5 +1,6 @@
 #include "ModeManager.h"
 
+// I am trapped here, I cant get out, I am stuck in a loop in your garage!
 ModeManager::ModeManager() {
     currentState = MenuState::MAIN_DISPLAY;
     currentMainMenuItem = MainMenuItem::FAN;
