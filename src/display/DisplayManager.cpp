@@ -41,6 +41,34 @@ const unsigned char BLUETOOTH_ICON[] PROGMEM = {
     0b00001000, 0b00000000
 };
 
+void DisplayManager::updateScrollingText(const String& text) {
+    int16_t x1, y1;
+    uint16_t w, h;
+    
+    // Measure the text width
+    display.setTextSize(1);
+    display.getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
+    
+    // Only scroll if enough time has passed
+    if (millis() - lastScrollTime >= SCROLL_DELAY) {
+        scrollPosition--;
+        
+        // Reset position when text has scrolled completely off screen
+        if (scrollPosition < -w) {
+            scrollPosition = screenWidth;
+        }
+        
+        lastScrollTime = millis();
+    }
+
+    // Create a filled black rectangle as background to hide overflow
+    display.fillRect(0, 54, screenWidth, 10, SSD1306_BLACK);
+    
+    // Draw the scrolling text
+    display.setCursor(scrollPosition, 55);
+    display.print(text);
+}
+
 void DisplayManager::drawDefaultScreen() {
     display.clearDisplay();
     display.setTextColor(SSD1306_WHITE);
@@ -71,8 +99,7 @@ void DisplayManager::drawDefaultScreen() {
     display.print("(LED)");
 
     // Bottom: Song Name
-    display.setCursor(0, 55);
-    display.print("Never Gonna Give You Up");
+    updateScrollingText("Altimate trolls: Never Gonna Give You Up");
 
     display.display();
 }

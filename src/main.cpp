@@ -23,4 +23,5 @@ void loop() {
     inputManager.update();
     
     modeManager.update(inputManager.getCurrentValue(), inputManager.isButtonPressed());
+    displayManager.drawDefaultScreen();
 }
