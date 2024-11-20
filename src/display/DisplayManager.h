@@ -10,6 +10,7 @@ public:
     void begin();
     void drawDefaultScreen();
     void updateScrollingText(const String& text);
+    void drawPlayIcon(int x, int y);
 
 private:
     Adafruit_SSD1306 display;

@@ -17,35 +17,11 @@ void DisplayManager::begin() {
     display.display();
 }
 
-// WiFi icon (16x16 pixels)
-const unsigned char WIFI_ICON[] PROGMEM = {
-    0b00000000, 0b00000000,
-    0b00011000, 0b00000000,
-    0b01100110, 0b00000000,
-    0b10000001, 0b10000000,
-    0b01000010, 0b01000000,
-    0b00100100, 0b00100000,
-    0b00011000, 0b00000000,
-    0b00000000, 0b00000000
-};
-
-// Bluetooth icon (16x16 pixels)
-const unsigned char BLUETOOTH_ICON[] PROGMEM = {
-    0b00011000, 0b00000000,
-    0b00001100, 0b00000000,
-    0b00000110, 0b00000000,
-    0b01111111, 0b00000000,
-    0b00111110, 0b00000000,
-    0b01111111, 0b00000000,
-    0b00011100, 0b00000000,
-    0b00001000, 0b00000000
-};
-
 void DisplayManager::updateScrollingText(const String& text) {
     int16_t x1, y1;
     uint16_t w, h;
     
-    // Measure the text width
+    // Measure the text width and height
     display.setTextSize(1);
     display.getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
     
@@ -53,20 +29,37 @@ void DisplayManager::updateScrollingText(const String& text) {
     if (millis() - lastScrollTime >= SCROLL_DELAY) {
         scrollPosition--;
         
-        // Reset position when text has scrolled completely off screen
-        if (scrollPosition < -w) {
-            scrollPosition = screenWidth;
+        // Reset position when text has scrolled one full cycle
+        if (scrollPosition < -(w + screenWidth)) {  // text width + screen width
+            scrollPosition = 0;
         }
         
         lastScrollTime = millis();
     }
 
-    // Create a filled black rectangle as background to hide overflow
-    display.fillRect(0, 54, screenWidth, 10, SSD1306_BLACK);
+    // Set text color to ensure proper drawing
+    display.setTextColor(SSD1306_WHITE);
     
-    // Draw the scrolling text
-    display.setCursor(scrollPosition, 55);
+    // Create a much larger filled black rectangle as background
+    display.fillRect(0, 50, screenWidth, 16, SSD1306_BLACK);
+    
+    // Draw two copies of the text for seamless scrolling
+    display.setCursor(scrollPosition, 56);
     display.print(text);
+    
+    display.setCursor(scrollPosition + w + screenWidth, 56);  // Ensure no overlap
+    display.print(text);
+}
+
+void DisplayManager::drawPlayIcon(int x, int y) {
+    int x1 = x;
+    int y1 = y;
+    int x2 = x;
+    int y2 = y + 8;    // Height matches text size 1
+    int x3 = x + 6;    // Width slightly less than height
+    int y3 = y + 4;    // Midpoint of the height
+
+    display.fillTriangle(x1, y1, x2, y2, x3, y3, SSD1306_WHITE);
 }
 
 void DisplayManager::drawDefaultScreen() {
@@ -90,16 +83,20 @@ void DisplayManager::drawDefaultScreen() {
 
     // Center: Time in larger text
     display.setTextSize(2);
-    display.setCursor(15, 22);
+    display.setCursor(20, 24);
     display.print("14:30");
 
-    // Mode display
+    // Play Icon - replacing the ">" text
+    drawPlayIcon(0, 28);
+
+    // Mode display 
     display.setTextSize(1);
-    display.setCursor(90, 27);
+    display.setCursor(90, 28);
     display.print("(LED)");
 
     // Bottom: Song Name
-    updateScrollingText("Altimate trolls: Never Gonna Give You Up");
+    updateScrollingText("Rick Astley: Never Gonna Give You Up");
 
+    // Move display.display() here to update everything at once
     display.display();
 }
