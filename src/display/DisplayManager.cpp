@@ -95,7 +95,7 @@ void DisplayManager::drawDefaultScreen() {
     display.print("(LED)");
 
     // Bottom: Song Name
-    updateScrollingText("Rick Astley: Never Gonna Give You Up");
+    updateScrollingText("Now playing - Rick Astley: Never Gonna Give You Up");
 
     // Move display.display() here to update everything at once
     display.display();
