@@ -18,37 +18,36 @@ void DisplayManager::begin() {
 }
 
 void DisplayManager::updateScrollingText(const String& text) {
-    int16_t x1, y1;
-    uint16_t w, h;
+    static unsigned long lastUpdate = 0;
+    unsigned long currentTime = millis();
     
-    // Measure the text width and height
+    // Get text width for the current font size
     display.setTextSize(1);
-    display.getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
-    
-    // Only scroll if enough time has passed
-    if (millis() - lastScrollTime >= SCROLL_DELAY) {
-        scrollPosition--;
-        
-        // Reset position when text has scrolled one full cycle
-        if (scrollPosition < -(w + screenWidth)) {  // text width + screen width
-            scrollPosition = 0;
+    int16_t x1, y1;
+    uint16_t textWidth, textHeight;
+    display.getTextBounds(text, 0, 0, &x1, &y1, &textWidth, &textHeight);
+
+    // Only scroll if text is wider than screen
+    if (textWidth > screenWidth) {
+        if (currentTime - lastUpdate >= SCROLL_DELAY) {
+            scrollPosition++;
+            // Reset position when text has scrolled completely
+            if (scrollPosition >= textWidth + screenWidth) {
+                scrollPosition = -screenWidth;
+            }
+            lastUpdate = currentTime;
         }
         
-        lastScrollTime = millis();
+        display.setTextSize(1);
+        display.setCursor(-scrollPosition, 54);  // Bottom position
+        display.print(text);
+    } else {
+        // Center the text if it's shorter than screen width
+        display.setTextSize(1);
+        int16_t centerX = (screenWidth - textWidth) / 2;
+        display.setCursor(centerX, 54);
+        display.print(text);
     }
-
-    // Set text color to ensure proper drawing
-    display.setTextColor(SSD1306_WHITE);
-    
-    // Create a much larger filled black rectangle as background
-    display.fillRect(0, 50, screenWidth, 16, SSD1306_BLACK);
-    
-    // Draw two copies of the text for seamless scrolling
-    display.setCursor(scrollPosition, 56);
-    display.print(text);
-    
-    display.setCursor(scrollPosition + w + screenWidth, 56);  // Ensure no overlap
-    display.print(text);
 }
 
 void DisplayManager::drawPlayIcon(int x, int y) {
@@ -86,7 +85,7 @@ void DisplayManager::drawDefaultScreen() {
     display.setCursor(20, 24);
     display.print("14:30");
 
-    // Play Icon - replacing the ">" text
+    // Play Icon
     drawPlayIcon(0, 28);
 
     // Mode display 
@@ -95,7 +94,7 @@ void DisplayManager::drawDefaultScreen() {
     display.print("(LED)");
 
     // Bottom: Song Name
-    updateScrollingText("Now playing - Rick Astley: Never Gonna Give You Up");
+    updateScrollingText("Short text and then there is some longer test to perform");
 
     // Move display.display() here to update everything at once
     display.display();
