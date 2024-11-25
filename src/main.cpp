@@ -6,11 +6,13 @@
 #include "display/DisplayManager.h"
 #include "mode/media/MediaManager.h"
 #include "sensor/SensorManager.h"
+#include "communication/bluetooth/BluetoothManager.h"
 
+BluetoothManager bluetoothManager;
 MediaManager mediaManager;
 InputManager inputManager;
 ModeManager modeManager;
-DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire);
+DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, bluetoothManager);
 SensorManager sensorManager;
 
 void setup() {
@@ -20,6 +22,7 @@ void setup() {
     Serial.flush();
     
     Wire.begin();
+    bluetoothManager.begin();
     mediaManager.begin();
     inputManager.begin();
     modeManager.begin();
@@ -32,8 +35,9 @@ void loop() {
     inputManager.update();
     mediaManager.update();
     sensorManager.update();
+    bluetoothManager.update();
 
-    Serial.println("Loop running");
+    //Serial.println("Loop running");
     
     modeManager.update(inputManager.getCurrentValue(), inputManager.isButtonPressed());
     displayManager.drawDefaultScreen(

@@ -1,24 +1,19 @@
 #include "BluetoothManager.h"
 
-BluetoothManager::BluetoothManager() {
-    calculateTextLength();
-}
-
 void BluetoothManager::begin() {
-    // Bluetooth setup will go here later
-    Serial.println("Bluetooth Manager Started");
-    Serial.print("Current text length: ");
-    Serial.println(textLength);
+    // Initialize Bluetooth here
+    // For now, just set as disconnected
+    connected = false;
 }
 
-String BluetoothManager::getCurrentText() {
-    return currentText;
-}
-
-int BluetoothManager::getTextLength() {
-    return textLength;
-}
-
-void BluetoothManager::calculateTextLength() {
-    textLength = currentText.length();
+void BluetoothManager::update() {
+    // Update connection status here when you implement Bluetooth
+    // For now, just handle the blinking logic
+    if (!connected) {
+        unsigned long currentTime = millis();
+        if (currentTime - lastBlinkTime >= BLINK_INTERVAL) {
+            blinkState = !blinkState;
+            lastBlinkTime = currentTime;
+        }
+    }
 }

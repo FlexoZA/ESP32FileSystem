@@ -2,9 +2,11 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 
-DisplayManager::DisplayManager(int width, int height, TwoWire *wire) 
-    : screenWidth(width), screenHeight(height), 
-      display(width, height, wire, OLED_RESET) {
+DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager) 
+    : screenWidth(width), 
+      screenHeight(height), 
+      display(width, height, wire, OLED_RESET),
+      bluetoothManager(btManager) {  // Initialize the reference
 }
 
 void DisplayManager::begin() {
@@ -76,7 +78,11 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // Bluetooth connection
     display.setTextSize(1);
     display.setCursor(80, 0); 
-    display.print("bt");
+    if (bluetoothManager.isConnected()) {
+        display.print("BT");
+    } else if (bluetoothManager.getBlinkState()) {
+        display.print("bt");  // Blink by only showing when blinkState is true
+    }
 
     // WIFI connection
     display.setTextSize(1);
