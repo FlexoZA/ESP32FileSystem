@@ -8,7 +8,7 @@ class DisplayManager {
 public:
     DisplayManager(int width = SCREEN_WIDTH, int height = SCREEN_HEIGHT, TwoWire *wire = nullptr);
     void begin();
-    void drawDefaultScreen();
+    void drawDefaultScreen(float temperature, float humidity);
     void updateScrollingText(const String& text);
     void drawPlayIcon(int x, int y);
 

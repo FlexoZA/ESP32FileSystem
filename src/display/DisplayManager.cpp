@@ -61,14 +61,17 @@ void DisplayManager::drawPlayIcon(int x, int y) {
     display.fillTriangle(x1, y1, x2, y2, x3, y3, SSD1306_WHITE);
 }
 
-void DisplayManager::drawDefaultScreen() {
+void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     display.clearDisplay();
     display.setTextColor(SSD1306_WHITE);
 
     // Top left: Temperature and Humidity
     display.setTextSize(1);
     display.setCursor(0, 0);
-    display.print("25.5C - 60%");
+    display.print(temperature, 1);
+    display.print("C - ");
+    display.print((int)humidity);
+    display.print("%");
 
     // Bluetooth connection
     display.setTextSize(1);

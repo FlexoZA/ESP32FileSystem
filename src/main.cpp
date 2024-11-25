@@ -5,11 +5,13 @@
 #include "mode/ModeManager.h"
 #include "display/DisplayManager.h"
 #include "mode/media/MediaManager.h"
+#include "sensor/SensorManager.h"
 
 MediaManager mediaManager;
 InputManager inputManager;
 ModeManager modeManager;
 DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire);
+SensorManager sensorManager;
 
 void setup() {
     Serial.begin(9600);
@@ -22,16 +24,20 @@ void setup() {
     inputManager.begin();
     modeManager.begin();
     displayManager.begin();
-    
-    displayManager.drawDefaultScreen();
+    sensorManager.begin();
+    displayManager.drawDefaultScreen(0.0, 0.0);
 }
 
 void loop() {
     inputManager.update();
     mediaManager.update();
+    sensorManager.update();
 
     Serial.println("Loop running");
     
     modeManager.update(inputManager.getCurrentValue(), inputManager.isButtonPressed());
-    displayManager.drawDefaultScreen();
+    displayManager.drawDefaultScreen(
+        sensorManager.getTemperature(),
+        sensorManager.getHumidity()
+    );
 }

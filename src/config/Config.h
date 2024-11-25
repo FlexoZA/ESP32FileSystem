@@ -9,6 +9,9 @@
 // Timing Constants
 #define DEBOUNCE_DELAY 80  // Debounce delay for button
 
+// DHT11 Pin Configuration
+#define DHT_PIN 19
+
 // OLED Configuration
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
