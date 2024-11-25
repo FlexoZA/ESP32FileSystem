@@ -81,13 +81,13 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     if (bluetoothManager.isConnected()) {
         display.print("BT");
     } else if (bluetoothManager.getBlinkState()) {
-        display.print("bt");  // Blink by only showing when blinkState is true
+        display.print("BT");  // Blink by only showing when blinkState is true
     }
 
     // WIFI connection
     display.setTextSize(1);
     display.setCursor(100, 0);
-    display.print("wifi");
+    display.print("WIFI");
 
     // Center: Time in larger text
     display.setTextSize(2);
