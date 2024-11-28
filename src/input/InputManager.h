@@ -20,6 +20,11 @@ private:
     bool allowButtonPress;
     unsigned long lastDebounceTime;
 
+    // ADKeyboard variables
+    int adKeyValue;
+    int lastAdKey;
+    unsigned long lastAdKeyDebounceTime;
+    
 public:
     InputManager();
     void begin();
@@ -28,6 +33,7 @@ public:
     void setLimits(int32_t min, int32_t max);
     bool isButtonPressed();
     bool isButtonReleased();
+    int getADKeyPressed();
 };
 
 #endif

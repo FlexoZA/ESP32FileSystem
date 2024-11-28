@@ -1,7 +1,8 @@
-#include "MediaManager.h"
+#include "mode/media/MediaManager.h"
 
-MediaManager::MediaManager() {
-    currentText = "Now Playing - Rick Astley: Never Gonna Give You Up";
+MediaManager::MediaManager(BluetoothManager& btManager) 
+    : bluetoothManager(btManager), isPlaying(false) {
+    currentText = "Media Player Ready";
 }
 
 void MediaManager::begin() {
@@ -15,6 +16,20 @@ void MediaManager::update() {
 
 String MediaManager::getCurrentText() const {
     return currentText;
+}
+
+void MediaManager::togglePlayPause() {
+    isPlaying = !isPlaying;
+    
+    // Send command via Bluetooth
+    bluetoothManager.playPause();
+    
+    // Update display text
+    if (isPlaying) {
+        currentText = "▶ Playing";
+    } else {
+        currentText = "⏸ Paused";
+    }
 }
 
 //void MediaManager::logTextDimensions(const String& text) {

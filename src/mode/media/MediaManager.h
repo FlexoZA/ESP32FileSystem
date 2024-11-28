@@ -2,18 +2,20 @@
 #define MEDIA_MANAGER_H
 
 #include <Arduino.h>
+#include "communication/bluetooth/BluetoothManager.h"
 
 class MediaManager {
 public:
-    MediaManager();
+    MediaManager(BluetoothManager& btManager);
     void begin();
     void update();
     String getCurrentText() const;
-    void logTextDimensions(const String& text);
+    void togglePlayPause();
 
 private:
     String currentText;
-    void calculateTextDimensions();
+    bool isPlaying;
+    BluetoothManager& bluetoothManager;
 };
 
 #endif

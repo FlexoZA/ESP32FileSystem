@@ -80,7 +80,7 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // Bluetooth connection
     display.setTextSize(1);
     display.setCursor(80, 0); 
-    if (bluetoothManager.isConnected()) {
+    if (bluetoothManager.isDeviceConnected()) {
         display.print("BT");
     } else if (bluetoothManager.getBlinkState()) {
         display.print("BT");

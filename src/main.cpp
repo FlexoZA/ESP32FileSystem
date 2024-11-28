@@ -11,7 +11,7 @@
 #include "time/TimeManager.h"
 
 BluetoothManager bluetoothManager;
-MediaManager mediaManager;
+MediaManager mediaManager(bluetoothManager);
 WifiManager wifiManager;
 InputManager inputManager;
 ModeManager modeManager;
@@ -63,4 +63,9 @@ void loop() {
         sensorManager.getTemperature(),
         sensorManager.getHumidity()
     );
+    
+    // Check for button press
+    if (inputManager.getADKeyPressed() == 5) {  // Assuming button 1 is mapped to value 5
+        mediaManager.togglePlayPause();
+    }
 }
