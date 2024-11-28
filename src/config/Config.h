@@ -24,4 +24,7 @@
 #define WIFI_CONNECT_TIMEOUT 10000  // 10 seconds timeout for connection attempts
 #define WIFI_BLINK_INTERVAL 1000    // Blink interval for WiFi status indicator
 
+// Time Configuration
+#define GMT_OFFSET_SEC 7200  // GMT+2 (2 hours * 3600 seconds)
+
 #endif // CONFIG_H

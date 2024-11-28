@@ -2,12 +2,13 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 
-DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr) 
+DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr) 
     : screenWidth(width), 
       screenHeight(height), 
       display(width, height, wire, OLED_RESET),
       bluetoothManager(btManager),
-      wifiManager(wifiMgr) {  // Initialize the reference
+      wifiManager(wifiMgr),
+      timeManager(timeMgr) {  // Initialize the reference
 }
 
 void DisplayManager::begin() {
@@ -82,7 +83,7 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     if (bluetoothManager.isConnected()) {
         display.print("BT");
     } else if (bluetoothManager.getBlinkState()) {
-        display.print("BT");  // Blink by only showing when blinkState is true
+        display.print("BT");
     }
 
     // WIFI connection
@@ -91,13 +92,13 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     if (wifiManager.isConnected()) {
         display.print("WIFI");
     } else if (wifiManager.getBlinkState()) {
-        display.print("WIFI");  // Blink by only showing when blinkState is true
+        display.print("WIFI");
     }
 
     // Center: Time in larger text
     display.setTextSize(2);
     display.setCursor(20, 24);
-    display.print("14:30");
+    display.print(timeManager.getFormattedTime());
 
     // Play Icon
     drawPlayIcon(0, 28);
@@ -110,6 +111,5 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // Bottom: Song Name
     updateScrollingText("Short text and then there is some longer test to perform");
 
-    // Move display.display() here to update everything at once
     display.display();
 }
