@@ -1,16 +1,11 @@
 #include "MediaManager.h"
 
 MediaManager::MediaManager() {
-    currentText = "Now Playing - Rick Astley: Never Gonna Give You Up 12";
+    currentText = "Now Playing - Rick Astley: Never Gonna Give You Up";
 }
 
 void MediaManager::begin() {
-    delay(100);  // Give Serial a moment
-    Serial.print("Testing Serial... ");  // Add this line
-    Serial.flush();  // Force the output
-    delay(100);  // Wait a bit
     Serial.println("Media Manager Started");
-    Serial.flush();
     logTextDimensions(currentText);
 }
 

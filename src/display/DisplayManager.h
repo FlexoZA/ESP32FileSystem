@@ -4,10 +4,11 @@
 #include <Adafruit_SSD1306.h>
 #include "../config/Config.h"
 #include "../communication/bluetooth/BluetoothManager.h"
+#include "../communication/wifi/WifiManager.h"
 
 class DisplayManager {
 public:
-    DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager);
+    DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr);
     void begin();
     void drawDefaultScreen(float temperature, float humidity);
     void updateScrollingText(const String& text);
@@ -16,6 +17,7 @@ public:
 private:
     Adafruit_SSD1306 display;
     BluetoothManager& bluetoothManager;
+    WifiManager& wifiManager;
     int screenWidth;
     int screenHeight;
     int scrollPosition = 0;

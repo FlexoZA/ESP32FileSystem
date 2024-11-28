@@ -18,4 +18,10 @@
 #define OLED_RESET -1
 #define OLED_ADDRESS 0x3C
 
+// WiFi Configuration
+#define WIFI_SSID "Lab"
+#define WIFI_PASSWORD "jason789"
+#define WIFI_CONNECT_TIMEOUT 10000  // 10 seconds timeout for connection attempts
+#define WIFI_BLINK_INTERVAL 1000    // Blink interval for WiFi status indicator
+
 #endif // CONFIG_H
