@@ -13,14 +13,9 @@ InputManager::InputManager() :
 }
 
 void InputManager::begin() {
-    // Initialize encoder
     encoder.attachSingleEdge(ENCODER_DT_PIN, ENCODER_CLK_PIN);
     encoder.clearCount();
-
-    // Set up encoder button pin
     pinMode(ENCODER_SW_PIN, INPUT_PULLUP);
-
-    Serial.println("Input Manager initialized.");
 }
 
 void InputManager::update() {

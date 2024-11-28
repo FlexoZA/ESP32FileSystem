@@ -5,8 +5,8 @@ MediaManager::MediaManager() {
 }
 
 void MediaManager::begin() {
-    Serial.println("Media Manager Started");
-    logTextDimensions(currentText);
+    // Serial.println("Media Manager Started");
+    // logTextDimensions(currentText);
 }
 
 void MediaManager::update() {
@@ -17,8 +17,8 @@ String MediaManager::getCurrentText() const {
     return currentText;
 }
 
-void MediaManager::logTextDimensions(const String& text) {
-    Serial.print("Text received: ");
-    Serial.println(text);
-    Serial.flush();
-}
+//void MediaManager::logTextDimensions(const String& text) {
+    // Serial.print("Text received: ");
+    // Serial.println(text);
+    // Serial.flush();
+//}

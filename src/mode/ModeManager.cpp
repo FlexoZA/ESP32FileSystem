@@ -10,8 +10,8 @@ ModeManager::ModeManager() {
 }
 
 void ModeManager::begin() {
-    Serial.println("Mode Manager Initialized");
-    Serial.println("Current Menu Item: FAN");  // Initial state
+    // Serial.println("Mode Manager Initialized");
+    // Serial.println("Current Menu Item: FAN");  // Initial state
 }
 
 void ModeManager::update(int encoderValue, bool buttonPressed) {
@@ -39,36 +39,22 @@ void ModeManager::update(int encoderValue, bool buttonPressed) {
         switch (currentState) {
             case MenuState::MAIN_DISPLAY:
                 currentState = MenuState::MENU_SELECT;
-                Serial.println("Entering Menu Selection Mode");
-                Serial.print("Current Menu Item: ");
-                switch (currentMainMenuItem) {
-                    case MainMenuItem::FAN:
-                        Serial.println("FAN");
-                        break;
-                    case MainMenuItem::LED:
-                        Serial.println("LED");
-                        break;
-                    case MainMenuItem::MEDIA:
-                        Serial.println("MEDIA");
-                        break;
-                    default:
-                        break;
-                }
+                // Serial.println("Entering Menu Selection Mode");
                 break;
                 
             case MenuState::MENU_SELECT:
                 switch (currentMainMenuItem) {
                     case MainMenuItem::FAN:
                         currentState = MenuState::FAN_MENU;
-                        Serial.println("Entering Fan Menu");
+                        // Serial.println("Entering Fan Menu");
                         break;
                     case MainMenuItem::LED:
                         currentState = MenuState::LED_MENU;
-                        Serial.println("Entering LED Menu");
+                        // Serial.println("Entering LED Menu");
                         break;
                     case MainMenuItem::MEDIA:
                         currentState = MenuState::MEDIA_MENU;
-                        Serial.println("Entering Media Menu");
+                        // Serial.println("Entering Media Menu");
                         break;
                     default:
                         break;
@@ -78,13 +64,13 @@ void ModeManager::update(int encoderValue, bool buttonPressed) {
             case MenuState::LED_MENU:
                 if (currentLEDMenuItem == LEDMenuItem::BACK) {
                     currentState = MenuState::MENU_SELECT;
-                    Serial.println("Returning to Main Menu");
+                    // Serial.println("Returning to Main Menu");
                 }
                 break;
                 
             default:
                 currentState = MenuState::MENU_SELECT;
-                Serial.println("Returning to Main Menu");
+                // Serial.println("Returning to Main Menu");
                 break;
         }
     }
@@ -108,20 +94,20 @@ void ModeManager::handleMainMenu(int difference) {
     currentMainMenuItem = static_cast<MainMenuItem>(currentIndex);
     
     // Print current selection
-    Serial.print("Current Menu Item: ");
-    switch (currentMainMenuItem) {
-        case MainMenuItem::FAN:
-            Serial.println("FAN");
-            break;
-        case MainMenuItem::LED:
-            Serial.println("LED");
-            break;
-        case MainMenuItem::MEDIA:
-            Serial.println("MEDIA");
-            break;
-        default:
-            break;
-    }
+    // Serial.print("Current Menu Item: ");
+    // switch (currentMainMenuItem) {
+    //     case MainMenuItem::FAN:
+    //         Serial.println("FAN");
+    //         break;
+    //     case MainMenuItem::LED:
+    //         Serial.println("LED");
+    //         break;
+    //     case MainMenuItem::MEDIA:
+    //         Serial.println("MEDIA");
+    //         break;
+    //     default:
+    //         break;
+    // }
 }
 
 void ModeManager::handleLEDMenu(int difference) {
@@ -142,18 +128,18 @@ void ModeManager::handleLEDMenu(int difference) {
     currentLEDMenuItem = static_cast<LEDMenuItem>(currentIndex);
     
     // Print current selection
-    Serial.print("Current LED Menu Item: ");
-    switch (currentLEDMenuItem) {
-        case LEDMenuItem::BRIGHTNESS:
-            Serial.println("BRIGHTNESS");
-            break;
-        case LEDMenuItem::COLOR_SCHEME:
-            Serial.println("COLOR SCHEME");
-            break;
-        case LEDMenuItem::BACK:
-            Serial.println("BACK");
-            break;
-        default:
-            break;
-    }
+    // Serial.print("Current LED Menu Item: ");
+    // switch (currentLEDMenuItem) {
+    //     case LEDMenuItem::BRIGHTNESS:
+    //         Serial.println("BRIGHTNESS");
+    //         break;
+    //     case LEDMenuItem::COLOR_SCHEME:
+    //         Serial.println("COLOR SCHEME");
+    //         break;
+    //     case LEDMenuItem::BACK:
+    //         Serial.println("BACK");
+    //         break;
+    //     default:
+    //         break;
+    // }
 }
