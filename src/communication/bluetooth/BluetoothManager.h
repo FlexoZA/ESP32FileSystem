@@ -7,12 +7,13 @@
 #include <BLEServer.h>
 #include <BLEHIDDevice.h>
 
-class BluetoothManager {
+class BluetoothManager : public BLEServerCallbacks {
 private:
     BLEServer* pServer;
     BLEHIDDevice* hid;
     BLECharacteristic* mediaControl;
     bool deviceConnected;
+    bool oldDeviceConnected;
     bool blinkState;
     unsigned long lastBlinkTime;
     
@@ -25,6 +26,12 @@ public:
     bool isDeviceConnected() const;
     bool getBlinkState() const;
     void playPause();
+    void nextTrack();
+    void previousTrack();
+    void restartTrack();
+    
+    void onConnect(BLEServer* pServer) override;
+    void onDisconnect(BLEServer* pServer) override;
 };
 
 #endif

@@ -68,28 +68,32 @@ void InputManager::update() {
 
     lastButtonState = reading;
 
-    // Handle ADKeyboard
-    int adReading = analogRead(AD_KEYBOARD_PIN);  // Using the config constant
+    // Handle ADKeyboard with improved debouncing
+    int adReading = analogRead(AD_KEYBOARD_PIN);
     int currentKey = -1;
     
-    // Map analog values to buttons (adjust these values based on your keyboard)
+    // Map analog values to buttons
     if (adReading < 100) currentKey = 1;        // Right
     else if (adReading < 500) currentKey = 2;   // Up
     else if (adReading < 1500) currentKey = 3;  // Down
     else if (adReading < 2500) currentKey = 4;  // Left
     else if (adReading < 3500) currentKey = 5;  // Select
     
+    // Only update if the reading is different
     if (currentKey != lastAdKey) {
         lastAdKeyDebounceTime = millis();
     }
 
     if ((millis() - lastAdKeyDebounceTime) > DEBOUNCE_DELAY) {
-        if (currentKey != adKeyValue) {
+        // Only register a new press if we're coming from no press
+        if (currentKey != -1 && adKeyValue == -1) {
             adKeyValue = currentKey;
             if (adKeyValue != -1) {
                 Serial.print("ADKey pressed: ");
                 Serial.println(adKeyValue);
             }
+        } else if (currentKey == -1) {
+            adKeyValue = -1; // Reset when button is released
         }
     }
     

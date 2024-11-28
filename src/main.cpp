@@ -64,8 +64,27 @@ void loop() {
         sensorManager.getHumidity()
     );
     
-    // Check for button press
-    if (inputManager.getADKeyPressed() == 5) {  // Assuming button 1 is mapped to value 5
-        mediaManager.togglePlayPause();
+    // Media controls
+    int pressedButton = inputManager.getADKeyPressed();
+    if (pressedButton != -1) {
+        switch (pressedButton) {
+            case 1:  // Play/Pause
+                if (bluetoothManager.isDeviceConnected()) {
+                    mediaManager.togglePlayPause();
+                }
+                break;
+                
+            case 2:  // Next Track
+                if (bluetoothManager.isDeviceConnected()) {
+                    mediaManager.nextTrack();
+                }
+                break;
+                
+            case 3:  // Previous/Restart Track
+                if (bluetoothManager.isDeviceConnected()) {
+                    mediaManager.handlePreviousButton();
+                }
+                break;
+        }
     }
 }

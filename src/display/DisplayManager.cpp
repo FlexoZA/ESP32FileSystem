@@ -72,9 +72,11 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // Top left: Temperature and Humidity
     display.setTextSize(1);
     display.setCursor(0, 0);
-    display.print(temperature, 1);
+    //display.print(temperature, 1);
+    display.print(20); // Remove if sensor is in
     display.print("C - ");
-    display.print((int)humidity);
+    //display.print((int)humidity);
+    display.print((int) 20); // Remove if sensor is in
     display.print("%");
 
     // Bluetooth connection

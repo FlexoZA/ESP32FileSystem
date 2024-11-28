@@ -8,7 +8,9 @@
 #define AD_KEYBOARD_PIN 33   // ADKeyboard analog input pin
 
 // Timing Constants
-#define DEBOUNCE_DELAY 80  // Debounce delay for button
+#define DEBOUNCE_DELAY 100  // Debounce delay for button
+//#define DOUBLE_PRESS_DELAY 400 // ms between presses for double press
+#define PREVIOUS_BUTTON_DELAY 300 // Previous button press delay for double press
 
 // DHT11 Pin Configuration
 #define DHT_PIN 19
@@ -20,8 +22,8 @@
 #define OLED_ADDRESS 0x3C
 
 // WiFi Configuration
-#define WIFI_SSID "Lab"
-#define WIFI_PASSWORD "jason789"
+#define WIFI_SSID "flexoZA"
+#define WIFI_PASSWORD "Chr0846400936#"
 #define WIFI_CONNECT_TIMEOUT 10000  // 10 seconds timeout for connection attempts
 #define WIFI_BLINK_INTERVAL 1000    // Blink interval for WiFi status indicator
 
