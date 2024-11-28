@@ -29,6 +29,8 @@ public:
     void nextTrack();
     void previousTrack();
     void restartTrack();
+    void volumeUp();
+    void volumeDown();
     
     void onConnect(BLEServer* pServer) override;
     void onDisconnect(BLEServer* pServer) override;

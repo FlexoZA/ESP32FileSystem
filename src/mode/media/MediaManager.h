@@ -14,6 +14,7 @@ public:
     void togglePlayPause();
     void nextTrack();
     void handlePreviousButton();
+    void adjustVolume(int delta);
 
 private:
     String currentText;

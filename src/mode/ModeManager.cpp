@@ -7,6 +7,7 @@ ModeManager::ModeManager() {
     currentLEDMenuItem = LEDMenuItem::BRIGHTNESS;
     lastEncoderValue = 0;
     currentMenuIndex = 0;
+    isInMediaMode = false;
 }
 
 void ModeManager::begin() {
@@ -142,4 +143,13 @@ void ModeManager::handleLEDMenu(int difference) {
     //     default:
     //         break;
     // }
+}
+
+void ModeManager::setMediaMode(bool enabled) {
+    isInMediaMode = enabled;
+    if (enabled) {
+        currentState = MenuState::MEDIA_MENU;
+    } else {
+        currentState = MenuState::MAIN_DISPLAY;
+    }
 }

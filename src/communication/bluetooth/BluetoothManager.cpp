@@ -200,3 +200,51 @@ void BluetoothManager::onDisconnect(BLEServer* pServer) {
     // Don't immediately restart advertising
     // Let the update() method handle it
 }
+
+void BluetoothManager::volumeUp() {
+    if (!deviceConnected || !mediaControl) {
+        Serial.println("Cannot send command - not connected");
+        return;
+    }
+    
+    try {
+        uint8_t mediaReport = 0;
+        bitSet(mediaReport, 5); // Bit 5 is Volume Up
+        
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        delay(50);
+        
+        mediaReport = 0;
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        
+        Serial.println("Volume Up command sent");
+    } catch (...) {
+        Serial.println("Error sending volume up command");
+    }
+}
+
+void BluetoothManager::volumeDown() {
+    if (!deviceConnected || !mediaControl) {
+        Serial.println("Cannot send command - not connected");
+        return;
+    }
+    
+    try {
+        uint8_t mediaReport = 0;
+        bitSet(mediaReport, 6); // Bit 6 is Volume Down
+        
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        delay(50);
+        
+        mediaReport = 0;
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        
+        Serial.println("Volume Down command sent");
+    } catch (...) {
+        Serial.println("Error sending volume down command");
+    }
+}

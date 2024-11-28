@@ -20,7 +20,8 @@ DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, bluetoothManag
 SensorManager sensorManager;
 
 unsigned long lastTimeUpdate = 0;
-const unsigned long TIME_UPDATE_INTERVAL = 1000; // Update time every second
+const unsigned long TIME_UPDATE_INTERVAL = 1000;
+long lastEncoderValue = 0;
 
 void setup() {
     Serial.begin(115200);
@@ -64,9 +65,23 @@ void loop() {
         sensorManager.getHumidity()
     );
     
-    // Media controls
+    // Handle quick mode change (Button 4)
     int pressedButton = inputManager.getADKeyPressed();
-    if (pressedButton != -1) {
+    if (pressedButton == 4) { // Button 4
+        modeManager.setMediaMode(!modeManager.isMediaMode());
+    }
+
+    // Handle encoder for volume control when in media mode
+    if (modeManager.isMediaMode()) {
+        long encoderDelta = inputManager.getCurrentValue() - lastEncoderValue;
+        if (encoderDelta != 0) {
+            mediaManager.adjustVolume(encoderDelta);
+            lastEncoderValue = inputManager.getCurrentValue();
+        }
+    }
+
+    // Handle other media controls
+    if (pressedButton != -1 && pressedButton != 4) {
         switch (pressedButton) {
             case 1:  // Play/Pause
                 if (bluetoothManager.isDeviceConnected()) {

@@ -106,6 +106,21 @@ void MediaManager::handlePreviousButton() {
     lastPreviousButtonPress = currentTime;
 }
 
+void MediaManager::adjustVolume(int delta) {
+    if (!bluetoothManager.isDeviceConnected()) {
+        currentText = "Not Connected";
+        return;
+    }
+
+    if (delta > 0) {
+        bluetoothManager.volumeUp();
+        currentText = "Volume Up";
+    } else if (delta < 0) {
+        bluetoothManager.volumeDown();
+        currentText = "Volume Down";
+    }
+}
+
 //void MediaManager::logTextDimensions(const String& text) {
     // Serial.print("Text received: ");
     // Serial.println(text);

@@ -33,6 +33,7 @@ private:
     LEDMenuItem currentLEDMenuItem;
     int lastEncoderValue;
     int currentMenuIndex;  // Keep track of current position in numerical form
+    bool isInMediaMode;
     
     void handleMainMenu(int difference);
     void handleLEDMenu(int difference);
@@ -42,6 +43,8 @@ public:
     void begin();
     void update(int encoderValue, bool buttonPressed);
     MenuState getCurrentState() { return currentState; }
+    bool isMediaMode() const { return isInMediaMode; }
+    void setMediaMode(bool enabled);
 };
 
 #endif
