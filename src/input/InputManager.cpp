@@ -76,9 +76,16 @@ void InputManager::update() {
     if (adReading < 100) currentKey = 1;        // Right
     else if (adReading < 500) currentKey = 2;   // Up
     else if (adReading < 1500) currentKey = 3;  // Down
-    else if (adReading < 2500) currentKey = 4;  // Left
+    else if (adReading < 2500) currentKey = 4;  // Left/Quick Mode
     else if (adReading < 3500) currentKey = 5;  // Select
     
+    // Quick mode change handling (Button 4)
+    if (currentKey == 4 && lastAdKey != 4) {
+        if (quickModeChangeCallback) {
+            quickModeChangeCallback();
+        }
+    }
+
     // Only update if the reading is different
     if (currentKey != lastAdKey) {
         lastAdKeyDebounceTime = millis();
@@ -124,4 +131,8 @@ bool InputManager::isButtonReleased() {
 
 int InputManager::getADKeyPressed() {
     return adKeyValue;
+}
+
+void InputManager::setQuickModeChangeCallback(std::function<void()> callback) {
+    quickModeChangeCallback = callback;
 }

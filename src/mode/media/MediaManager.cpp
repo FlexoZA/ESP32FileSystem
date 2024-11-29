@@ -107,18 +107,21 @@ void MediaManager::handlePreviousButton() {
 }
 
 void MediaManager::adjustVolume(int delta) {
-    if (!bluetoothManager.isDeviceConnected()) {
-        currentText = "Not Connected";
-        return;
+    int newVolume = currentVolume + delta;
+    newVolume = constrain(newVolume, MIN_VOLUME, MAX_VOLUME);
+    
+    if (newVolume != currentVolume) {
+        currentVolume = newVolume;
+        if (delta > 0) {
+            bluetoothManager.volumeUp();
+        } else if (delta < 0) {
+            bluetoothManager.volumeDown();
+        }
     }
+}
 
-    if (delta > 0) {
-        bluetoothManager.volumeUp();
-        currentText = "Volume Up";
-    } else if (delta < 0) {
-        bluetoothManager.volumeDown();
-        currentText = "Volume Down";
-    }
+void MediaManager::setVolume(int volume) {
+    currentVolume = constrain(volume, MIN_VOLUME, MAX_VOLUME);
 }
 
 //void MediaManager::logTextDimensions(const String& text) {

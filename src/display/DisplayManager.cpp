@@ -65,6 +65,12 @@ void DisplayManager::drawPlayIcon(int x, int y) {
     display.fillTriangle(x1, y1, x2, y2, x3, y3, SSD1306_WHITE);
 }
 
+void DisplayManager::showProgress(int value) {
+    progressValue = constrain(value, 0, 100);
+    showingProgressBar = true;
+    progressBarStartTime = millis();
+}
+
 void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     display.clearDisplay();
     display.setTextColor(SSD1306_WHITE);
@@ -72,11 +78,11 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // Top left: Temperature and Humidity
     display.setTextSize(1);
     display.setCursor(0, 0);
-    //display.print(temperature, 1);
-    display.print(20); // Remove if sensor is in
+    display.print(temperature, 1);
+    //display.print(20); // Remove if sensor is in
     display.print("C - ");
-    //display.print((int)humidity);
-    display.print((int) 20); // Remove if sensor is in
+    display.print((int)humidity);
+    //display.print((int) 20); // Remove if sensor is in
     display.print("%");
 
     // Bluetooth connection
@@ -97,21 +103,56 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
         display.print("WIFI");
     }
 
-    // Center: Time in larger text
-    display.setTextSize(2);
-    display.setCursor(20, 24);
-    display.print(timeManager.getFormattedTime());
+    // Center: Either Time or Progress Bar
+    unsigned long currentTime = millis();
+    if (showingProgressBar && (currentTime - progressBarStartTime < PROGRESS_BAR_DURATION)) {
+        // Draw progress bar
+        int barWidth = 88; // Slightly smaller than time display width
+        int barHeight = 16; // Similar height to time display
+        int barX = 20; // Same X position as time
+        int barY = 24; // Same Y position as time
+        
+        // Draw bar outline
+        display.drawRect(barX, barY, barWidth, barHeight, SSD1306_WHITE);
+        
+        // Draw fill based on progress
+        int fillWidth = (barWidth - 4) * progressValue / 100;
+        display.fillRect(barX + 2, barY + 2, fillWidth, barHeight - 4, SSD1306_WHITE);
+        
+        // Draw percentage text
+        display.setTextSize(1);
+        display.setCursor(barX + (barWidth/2) - 10, barY + 4);
+        display.print(progressValue);
+        display.print("%");
+    } else {
+        // Draw time
+        showingProgressBar = false;
+        display.setTextSize(2);
+        display.setCursor(20, 24);
+        display.print(timeManager.getFormattedTime());
+    }
 
     // Play Icon
     drawPlayIcon(0, 28);
 
-    // Mode display 
-    display.setTextSize(1);
+    // Quick Control Mode indicator
     display.setCursor(90, 28);
-    display.print("(LED)");
+    display.setTextSize(1);
+    switch(currentQuickMode) {
+        case QuickControlMode::VOLUME:
+            display.print("[VOL]");
+            break;
+        case QuickControlMode::BRIGHTNESS:
+            display.print("[BRI]");
+            break;
+    }
 
     // Bottom: Song Name
     updateScrollingText("Short text and then there is some longer test to perform");
 
     display.display();
+}
+
+void DisplayManager::setQuickControlMode(QuickControlMode mode) {
+    currentQuickMode = mode;
 }

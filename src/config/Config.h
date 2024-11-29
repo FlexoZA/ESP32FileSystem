@@ -8,7 +8,7 @@
 #define AD_KEYBOARD_PIN 33   // ADKeyboard analog input pin
 
 // Timing Constants
-#define DEBOUNCE_DELAY 100  // Debounce delay for button
+#define DEBOUNCE_DELAY 80  // Debounce delay for button
 //#define DOUBLE_PRESS_DELAY 400 // ms between presses for double press
 #define PREVIOUS_BUTTON_DELAY 300 // Previous button press delay for double press
 
@@ -22,12 +22,23 @@
 #define OLED_ADDRESS 0x3C
 
 // WiFi Configuration
-#define WIFI_SSID "flexoZA"
-#define WIFI_PASSWORD "Chr0846400936#"
+#define WIFI_SSID "Lab"
+#define WIFI_PASSWORD "jason789"
 #define WIFI_CONNECT_TIMEOUT 10000  // 10 seconds timeout for connection attempts
 #define WIFI_BLINK_INTERVAL 1000    // Blink interval for WiFi status indicator
 
 // Time Configuration
 #define GMT_OFFSET_SEC 7200  // GMT+2 (2 hours * 3600 seconds)
+
+// LED Configuration
+#define LED_PIN 32  // Change this to match your actual pin connection
+#define NUM_LEDS 16
+
+// Quick Control Modes
+enum class QuickControlMode {
+    VOLUME,
+    BRIGHTNESS,
+    MODE_COUNT
+};
 
 #endif // CONFIG_H

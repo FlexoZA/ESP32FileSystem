@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <ESP32Encoder.h>
+#include <functional>
 #include "config/Config.h"
 
 class InputManager {
@@ -25,6 +26,8 @@ private:
     int lastAdKey;
     unsigned long lastAdKeyDebounceTime;
     
+    std::function<void()> quickModeChangeCallback;
+    
 public:
     InputManager();
     void begin();
@@ -34,6 +37,7 @@ public:
     bool isButtonPressed();
     bool isButtonReleased();
     int getADKeyPressed();
+    void setQuickModeChangeCallback(std::function<void()> callback);
 };
 
 #endif

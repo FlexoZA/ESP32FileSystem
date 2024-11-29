@@ -9,6 +9,7 @@
 #include "communication/bluetooth/BluetoothManager.h"
 #include "communication/wifi/WifiManager.h"
 #include "time/TimeManager.h"
+#include "mode/led/LEDManager.h"
 
 BluetoothManager bluetoothManager;
 MediaManager mediaManager(bluetoothManager);
@@ -18,10 +19,39 @@ ModeManager modeManager;
 TimeManager timeManager;
 DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, bluetoothManager, wifiManager, timeManager);
 SensorManager sensorManager;
+LEDManager ledManager(LED_PIN, NUM_LEDS);
 
 unsigned long lastTimeUpdate = 0;
 const unsigned long TIME_UPDATE_INTERVAL = 1000;
 long lastEncoderValue = 0;
+QuickControlMode currentQuickMode = QuickControlMode::VOLUME;
+
+void handleQuickModeChange() {
+    currentQuickMode = (currentQuickMode == QuickControlMode::VOLUME) ? 
+                      QuickControlMode::BRIGHTNESS : 
+                      QuickControlMode::VOLUME;
+    displayManager.setQuickControlMode(currentQuickMode);
+}
+
+void handleEncoderChange(int difference) {
+    switch(currentQuickMode) {
+        case QuickControlMode::VOLUME:
+            {
+                mediaManager.adjustVolume(difference);
+                displayManager.showProgress(mediaManager.getVolume());
+            }
+            break;
+        case QuickControlMode::BRIGHTNESS:
+            {
+                int newBrightness = ledManager.getBrightness() + (difference * 5);
+                newBrightness = constrain(newBrightness, 0, 255);
+                ledManager.setBrightness(newBrightness);
+                int brightnessPercent = (newBrightness * 100) / 255;
+                displayManager.showProgress(brightnessPercent);
+            }
+            break;
+    }
+}
 
 void setup() {
     Serial.begin(115200);
@@ -36,11 +66,13 @@ void setup() {
     modeManager.begin();
     displayManager.begin();
     sensorManager.begin();
+    ledManager.begin();
     
     // Initialize time after WiFi is connected
     if (wifiManager.isConnected()) {
         timeManager.begin();
     }
+    inputManager.setQuickModeChangeCallback(handleQuickModeChange);
 }
 
 void loop() {
@@ -49,6 +81,7 @@ void loop() {
     sensorManager.update();
     bluetoothManager.update();
     wifiManager.update();
+    ledManager.update();
     
     // Update time periodically
     unsigned long currentMillis = millis();
@@ -101,5 +134,13 @@ void loop() {
                 }
                 break;
         }
+    }
+
+    // Handle encoder changes
+    long newValue = inputManager.getCurrentValue();
+    if (newValue != lastEncoderValue) {
+        int difference = newValue - lastEncoderValue;
+        handleEncoderChange(difference);
+        lastEncoderValue = newValue;
     }
 }
