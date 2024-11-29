@@ -105,21 +105,19 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
 
     // Center: Either Time or Progress Bar
     unsigned long currentTime = millis();
-    if (showingProgressBar && (currentTime - progressBarStartTime < PROGRESS_BAR_DURATION)) {
+    bool isShowingProgress = showingProgressBar && (currentTime - progressBarStartTime < PROGRESS_BAR_DURATION);
+
+    if (isShowingProgress) {
         // Draw progress bar
-        int barWidth = 88; // Slightly smaller than time display width
-        int barHeight = 16; // Similar height to time display
-        int barX = 20; // Same X position as time
-        int barY = 24; // Same Y position as time
+        int barWidth = 88;
+        int barHeight = 16;
+        int barX = 20;
+        int barY = 24;
         
-        // Draw bar outline
         display.drawRect(barX, barY, barWidth, barHeight, SSD1306_WHITE);
-        
-        // Draw fill based on progress
         int fillWidth = (barWidth - 4) * progressValue / 100;
         display.fillRect(barX + 2, barY + 2, fillWidth, barHeight - 4, SSD1306_WHITE);
         
-        // Draw percentage text
         display.setTextSize(1);
         display.setCursor(barX + (barWidth/2) - 10, barY + 4);
         display.print(progressValue);
@@ -135,16 +133,18 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // Play Icon
     drawPlayIcon(0, 28);
 
-    // Quick Control Mode indicator
-    display.setCursor(90, 28);
-    display.setTextSize(1);
-    switch(currentQuickMode) {
-        case QuickControlMode::VOLUME:
-            display.print("[VOL]");
-            break;
-        case QuickControlMode::BRIGHTNESS:
-            display.print("[BRI]");
-            break;
+    // Quick Control Mode indicator - only show if progress bar is not visible
+    if (!isShowingProgress) {
+        display.setCursor(90, 28);
+        display.setTextSize(1);
+        switch(currentQuickMode) {
+            case QuickControlMode::VOLUME:
+                display.print("[VOL]");
+                break;
+            case QuickControlMode::BRIGHTNESS:
+                display.print("[BRI]");
+                break;
+        }
     }
 
     // Bottom: Song Name

@@ -107,21 +107,43 @@ void MediaManager::handlePreviousButton() {
 }
 
 void MediaManager::adjustVolume(int delta) {
-    int newVolume = currentVolume + delta;
+    // Debounce volume changes
+    static unsigned long lastVolumeChange = 0;
+    unsigned long currentTime = millis();
+    if (currentTime - lastVolumeChange < 50) {
+        return;
+    }
+    lastVolumeChange = currentTime;
+
+    // Calculate new volume (5% per step)
+    int newVolume = currentVolume + (delta * 5);  // 5% per tick
     newVolume = constrain(newVolume, MIN_VOLUME, MAX_VOLUME);
     
     if (newVolume != currentVolume) {
-        currentVolume = newVolume;
+        // Determine direction
         if (delta > 0) {
+            Serial.println("Volume Up");
             bluetoothManager.volumeUp();
-        } else if (delta < 0) {
+        } else {
+            Serial.println("Volume Down");
             bluetoothManager.volumeDown();
         }
+        
+        currentVolume = newVolume;
+        delay(20);
     }
 }
 
 void MediaManager::setVolume(int volume) {
-    currentVolume = constrain(volume, MIN_VOLUME, MAX_VOLUME);
+    // Reset to 0 first
+    for (int i = 0; i < 100; i++) {
+        bluetoothManager.volumeDown();
+        delay(20);
+    }
+    
+    // Then set to desired level
+    currentVolume = 0;
+    adjustVolume(volume / 2); // Divide by 2 since each step is 2%
 }
 
 //void MediaManager::logTextDimensions(const String& text) {

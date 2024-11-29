@@ -31,12 +31,30 @@ void handleQuickModeChange() {
                       QuickControlMode::BRIGHTNESS : 
                       QuickControlMode::VOLUME;
     displayManager.setQuickControlMode(currentQuickMode);
+    
+    // Reset encoder value to prevent sudden changes when switching modes
+    lastEncoderValue = inputManager.getCurrentValue();
 }
 
 void handleEncoderChange(int difference) {
+    static unsigned long lastEncoderUpdate = 0;
+    unsigned long currentTime = millis();
+    
+    // Add debounce for encoder
+    if (currentTime - lastEncoderUpdate < 50) {
+        return;
+    }
+    lastEncoderUpdate = currentTime;
+
+    // Debug print
+    Serial.print("Encoder difference: ");
+    Serial.println(difference);
+
     switch(currentQuickMode) {
         case QuickControlMode::VOLUME:
             {
+                // Invert the difference if needed (depending on your encoder direction)
+                // difference = -difference;  // Uncomment this line if directions are reversed
                 mediaManager.adjustVolume(difference);
                 displayManager.showProgress(mediaManager.getVolume());
             }
@@ -104,13 +122,11 @@ void loop() {
         modeManager.setMediaMode(!modeManager.isMediaMode());
     }
 
-    // Handle encoder for volume control when in media mode
-    if (modeManager.isMediaMode()) {
-        long encoderDelta = inputManager.getCurrentValue() - lastEncoderValue;
-        if (encoderDelta != 0) {
-            mediaManager.adjustVolume(encoderDelta);
-            lastEncoderValue = inputManager.getCurrentValue();
-        }
+    // Handle encoder for volume/brightness control
+    long encoderDelta = inputManager.getCurrentValue() - lastEncoderValue;
+    if (encoderDelta != 0) {
+        handleEncoderChange(encoderDelta);
+        lastEncoderValue = inputManager.getCurrentValue();
     }
 
     // Handle other media controls
@@ -134,13 +150,5 @@ void loop() {
                 }
                 break;
         }
-    }
-
-    // Handle encoder changes
-    long newValue = inputManager.getCurrentValue();
-    if (newValue != lastEncoderValue) {
-        int difference = newValue - lastEncoderValue;
-        handleEncoderChange(difference);
-        lastEncoderValue = newValue;
     }
 }
