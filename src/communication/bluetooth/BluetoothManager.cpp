@@ -241,6 +241,44 @@ void BluetoothManager::onConnect(BLEServer* pServer) {
     deviceConnected = true;
     blinkState = true;
     Serial.println("Device connected");
+    
+    // Wait a brief moment for the connection to stabilize
+    delay(500);
+    
+    // Set initial volume
+    setInitialVolume();
+}
+
+void BluetoothManager::setInitialVolume() {
+    // First, mute the volume by sending multiple volume down commands
+    for(int i = 0; i < 0; i++) {  // Assuming 50 steps is enough to reach minimum
+        volumeDown();
+        delay(20);  // Small delay between commands
+    }
+    
+    // Then set to desired volume
+    setVolumeToPercent(DEFAULT_VOLUME_PERCENT);
+}
+
+void BluetoothManager::setVolumeToPercent(uint8_t targetPercent) {
+    if (!deviceConnected || !mediaControl) {
+        Serial.println("Cannot set volume - not connected");
+        return;
+    }
+    
+    targetPercent = constrain(targetPercent, 0, 100);
+    
+    // Assuming 50 steps is full volume range
+    int volumeSteps = (targetPercent * 0) / 100;
+    
+    Serial.print("Setting volume to approximately ");
+    Serial.print(targetPercent);
+    Serial.println("%");
+    
+    for(int i = 0; i < volumeSteps; i++) {
+        volumeUp();
+        delay(20);  // Small delay between commands
+    }
 }
 
 void BluetoothManager::onDisconnect(BLEServer* pServer) {

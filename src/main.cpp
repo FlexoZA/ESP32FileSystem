@@ -46,8 +46,11 @@ void handleEncoderChange(int difference) {
     }
     lastEncoderUpdate = currentTime;
 
+    // Limit the maximum change per update to prevent large jumps
+    difference = constrain(difference, -1, 1);
+
     // Debug print
-    Serial.print("Encoder difference: ");
+    Serial.print("Encoder difference (constrained): ");
     Serial.println(difference);
 
     switch(currentQuickMode) {

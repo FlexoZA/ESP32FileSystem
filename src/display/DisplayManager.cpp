@@ -54,18 +54,8 @@ void DisplayManager::updateScrollingText(const String& text) {
     }
 }
 
-void DisplayManager::drawPlayIcon(int x, int y) {
-    int x1 = x;
-    int y1 = y;
-    int x2 = x;
-    int y2 = y + 8;    // Height matches text size 1
-    int x3 = x + 6;    // Width slightly less than height
-    int y3 = y + 4;    // Midpoint of the height
-
-    display.fillTriangle(x1, y1, x2, y2, x3, y3, SSD1306_WHITE);
-}
-
 void DisplayManager::showProgress(int value) {
+    Serial.printf("Progress set to: %d%%\n", value);  // Add debug print
     progressValue = constrain(value, 0, 100);
     showingProgressBar = true;
     progressBarStartTime = millis();
@@ -79,10 +69,10 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     display.setTextSize(1);
     display.setCursor(0, 0);
     display.print(temperature, 1);
-    //display.print(20); // Remove if sensor is in
+    //display.print(20); // Remove if sensor is connected
     display.print("C - ");
     display.print((int)humidity);
-    //display.print((int) 20); // Remove if sensor is in
+    //display.print((int) 20); // Remove if sensor is connected
     display.print("%");
 
     // Bluetooth connection
@@ -129,9 +119,6 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
         display.setCursor(20, 24);
         display.print(timeManager.getFormattedTime());
     }
-
-    // Play Icon
-    drawPlayIcon(0, 28);
 
     // Quick Control Mode indicator - only show if progress bar is not visible
     if (!isShowingProgress) {

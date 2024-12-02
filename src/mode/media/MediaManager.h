@@ -25,7 +25,7 @@ private:
     unsigned long lastPreviousButtonPress;
     int previousButtonPressCount;
     static const unsigned long DOUBLE_PRESS_DELAY = 400; // ms between presses for double press
-    int currentVolume = 50;  // Default volume at 50%
+    int currentVolume = 30;  // Default volume at 30%
     static const int MIN_VOLUME = 0;
     static const int MAX_VOLUME = 100;
 };

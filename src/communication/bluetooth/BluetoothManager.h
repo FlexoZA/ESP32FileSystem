@@ -18,6 +18,9 @@ private:
     unsigned long lastBlinkTime;
     
     static const uint8_t MEDIA_KEYS_REPORT_MAP[];
+    static const uint8_t DEFAULT_VOLUME_PERCENT = 30;  // Adjust this value as needed
+    void setInitialVolume();
+    void setVolumeToPercent(uint8_t targetPercent);
     
 public:
     BluetoothManager();

@@ -4,7 +4,8 @@ MediaManager::MediaManager(BluetoothManager& btManager)
     : bluetoothManager(btManager), 
       isPlaying(false),
       lastPreviousButtonPress(0),
-      previousButtonPressCount(0) {
+      previousButtonPressCount(0),
+      currentVolume(30) {
     currentText = "Media Player Ready";
 }
 
@@ -107,7 +108,6 @@ void MediaManager::handlePreviousButton() {
 }
 
 void MediaManager::adjustVolume(int delta) {
-    // Debounce volume changes
     static unsigned long lastVolumeChange = 0;
     unsigned long currentTime = millis();
     if (currentTime - lastVolumeChange < 50) {
@@ -130,20 +130,31 @@ void MediaManager::adjustVolume(int delta) {
         }
         
         currentVolume = newVolume;
+        Serial.printf("Current Volume: %d%%\n", currentVolume);
         delay(20);
     }
 }
 
 void MediaManager::setVolume(int volume) {
+    // Constrain the input volume to valid range
+    volume = constrain(volume, MIN_VOLUME, MAX_VOLUME);
+    
     // Reset to 0 first
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 20; i++) {  // Reduced number of steps to avoid over-muting
         bluetoothManager.volumeDown();
         delay(20);
     }
     
     // Then set to desired level
     currentVolume = 0;
-    adjustVolume(volume / 2); // Divide by 2 since each step is 2%
+    int stepsNeeded = volume / 5;  // Since each step is 5%
+    
+    for (int i = 0; i < stepsNeeded; i++) {
+        bluetoothManager.volumeUp();
+        delay(20);
+    }
+    
+    currentVolume = volume;
 }
 
 //void MediaManager::logTextDimensions(const String& text) {
