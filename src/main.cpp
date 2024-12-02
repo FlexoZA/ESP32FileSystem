@@ -132,21 +132,21 @@ void loop() {
     // Handle other media controls
     if (pressedButton != -1 && pressedButton != 4) {
         switch (pressedButton) {
-            case 1:  // Play/Pause
+            case 3: // Previous/Restart Track (Button 1)
                 if (bluetoothManager.isDeviceConnected()) {
-                    mediaManager.togglePlayPause();
+                    mediaManager.handlePreviousButton();
                 }
                 break;
                 
-            case 2:  // Next Track
+            case 2:  // Next Track (Button 2)
                 if (bluetoothManager.isDeviceConnected()) {
                     mediaManager.nextTrack();
                 }
                 break;
                 
-            case 3:  // Previous/Restart Track
+            case 1: // Play/Pause (Button 3)
                 if (bluetoothManager.isDeviceConnected()) {
-                    mediaManager.handlePreviousButton();
+                    mediaManager.togglePlayPause();
                 }
                 break;
         }
