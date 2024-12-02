@@ -43,13 +43,13 @@ void DisplayManager::updateScrollingText(const String& text) {
         }
         
         display.setTextSize(1);
-        display.setCursor(-scrollPosition, 54);  // Bottom position
+        display.setCursor(-scrollPosition, 56);  // Bottom position
         display.print(text);
     } else {
         // Center the text if it's shorter than screen width
         display.setTextSize(1);
         int16_t centerX = (screenWidth - textWidth) / 2;
-        display.setCursor(centerX, 54);
+        display.setCursor(centerX, 56);
         display.print(text);
     }
 }

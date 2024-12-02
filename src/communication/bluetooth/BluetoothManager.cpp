@@ -96,6 +96,54 @@ void BluetoothManager::update() {
     }
 }
 
+void BluetoothManager::volumeUp() {
+    if (!deviceConnected || !mediaControl) {
+        Serial.println("Cannot send volume up - not connected");
+        return;
+    }
+    
+    try {
+        uint8_t mediaReport = 0;
+        bitSet(mediaReport, 0);  // Set first bit for Volume Up
+        
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        delay(20);
+        
+        mediaReport = 0;
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        
+        Serial.println("Volume Up command sent");
+    } catch (...) {
+        Serial.println("Error sending volume up command");
+    }
+}
+
+void BluetoothManager::volumeDown() {
+    if (!deviceConnected || !mediaControl) {
+        Serial.println("Cannot send volume down - not connected");
+        return;
+    }
+    
+    try {
+        uint8_t mediaReport = 0;
+        bitSet(mediaReport, 1);  // Set second bit for Volume Down
+        
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        delay(20);
+        
+        mediaReport = 0;
+        mediaControl->setValue(&mediaReport, 1);
+        mediaControl->notify();
+        
+        Serial.println("Volume Down command sent");
+    } catch (...) {
+        Serial.println("Error sending volume down command");
+    }
+}
+
 void BluetoothManager::playPause() {
     if (!deviceConnected || !mediaControl) {
         Serial.println("Cannot send command - not connected");
@@ -105,7 +153,7 @@ void BluetoothManager::playPause() {
     try {
         // Media control report (7 bits)
         uint8_t mediaReport = 0;
-        bitSet(mediaReport, 3); // Bit 3 is Play/Pause
+        bitSet(mediaReport, 2); // Bit 2 is Play/Pause
         
         // Send the press
         mediaControl->setValue(&mediaReport, 1);
@@ -133,7 +181,7 @@ void BluetoothManager::nextTrack() {
     try {
         // Media control report (7 bits)
         uint8_t mediaReport = 0;
-        bitSet(mediaReport, 0); // Bit 0 is Next Track
+        bitSet(mediaReport, 3); // Bit 3 is Next Track
         
         // Send the press
         mediaControl->setValue(&mediaReport, 1);
@@ -159,7 +207,7 @@ void BluetoothManager::previousTrack() {
     
     try {
         uint8_t mediaReport = 0;
-        bitSet(mediaReport, 1); // Bit 1 is Previous Track
+        bitSet(mediaReport, 4); // Bit 4 is Previous Track
         
         mediaControl->setValue(&mediaReport, 1);
         mediaControl->notify();
@@ -200,52 +248,4 @@ void BluetoothManager::onDisconnect(BLEServer* pServer) {
     Serial.println("Device disconnected");
     // Don't immediately restart advertising
     // Let the update() method handle it
-}
-
-void BluetoothManager::volumeUp() {
-    if (!deviceConnected || !mediaControl) {
-        Serial.println("Cannot send volume up - not connected");
-        return;
-    }
-    
-    try {
-        uint8_t mediaReport = 1;  // Set first bit for Volume Up
-        
-        mediaControl->setValue(&mediaReport, 1);
-        mediaControl->notify();
-        delay(20);
-        
-        // Reset the command
-        mediaReport = 0;
-        mediaControl->setValue(&mediaReport, 1);
-        mediaControl->notify();
-        
-        Serial.println("Volume Up command sent");
-    } catch (...) {
-        Serial.println("Error sending volume up command");
-    }
-}
-
-void BluetoothManager::volumeDown() {
-    if (!deviceConnected || !mediaControl) {
-        Serial.println("Cannot send volume down - not connected");
-        return;
-    }
-    
-    try {
-        uint8_t mediaReport = 2;  // Set second bit for Volume Down
-        
-        mediaControl->setValue(&mediaReport, 1);
-        mediaControl->notify();
-        delay(20);
-        
-        // Reset the command
-        mediaReport = 0;
-        mediaControl->setValue(&mediaReport, 1);
-        mediaControl->notify();
-        
-        Serial.println("Volume Down command sent");
-    } catch (...) {
-        Serial.println("Error sending volume down command");
-    }
 }
