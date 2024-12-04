@@ -5,7 +5,9 @@ MediaManager::MediaManager(BluetoothManager& btManager)
       isPlaying(false),
       lastPreviousButtonPress(0),
       previousButtonPressCount(0),
-      currentVolume(30) {
+      currentVolume(30),
+      messageDisplayTime(0),
+      isMessageDisplayed(false) {
     currentText = "Media Player Ready";
 }
 
@@ -16,6 +18,14 @@ void MediaManager::begin() {
 
 void MediaManager::update() {
     unsigned long currentTime = millis();
+    
+    // Check if a temporary message is displayed
+    if (isMessageDisplayed && (currentTime - messageDisplayTime >= 2000)) {
+        isMessageDisplayed = false; // Reset the flag
+        // Revert to the current play/pause state text
+        currentText = isPlaying ? "Playing" : "Paused";
+    }
+
     if (previousButtonPressCount > 0 && 
         (currentTime - lastPreviousButtonPress > DOUBLE_PRESS_DELAY)) {
         previousButtonPressCount = 0;
@@ -45,9 +55,9 @@ void MediaManager::togglePlayPause() {
     
     // Update display text
     if (isPlaying) {
-        currentText = "▶ Playing";
+        currentText = "Playing";
     } else {
-        currentText = "⏸ Paused";
+        currentText = "Paused";
     }
     
     // Send command
@@ -69,7 +79,9 @@ void MediaManager::nextTrack() {
         return;
     }
     
-    currentText = "⏭ Next Track";
+    currentText = "Next Track";
+    messageDisplayTime = millis(); // Set the time to revert
+    isMessageDisplayed = true; // Indicate a message is displayed
     bluetoothManager.nextTrack();
 }
 
@@ -92,15 +104,18 @@ void MediaManager::handlePreviousButton() {
     if (currentTime - lastPreviousButtonPress < DOUBLE_PRESS_DELAY) {
         previousButtonPressCount++;
         if (previousButtonPressCount == 2) {
-            // Double press - go to previous track
-            currentText = "⏮ Previous Track";
+            currentText = "Previous Track";
+            messageDisplayTime = millis(); // Set the time to revert
+            isMessageDisplayed = true; // Indicate a message is displayed
             bluetoothManager.previousTrack();
             previousButtonPressCount = 0; // Reset counter
         }
     } else {
         // First press or too long since last press
         previousButtonPressCount = 1;
-        currentText = "↺ Restart Track";
+        currentText = "Restart Track";
+        messageDisplayTime = millis(); // Set the time to revert
+        isMessageDisplayed = true; // Indicate a message is displayed
         bluetoothManager.restartTrack();
     }
     

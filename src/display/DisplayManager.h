@@ -6,22 +6,25 @@
 #include "../communication/bluetooth/BluetoothManager.h"
 #include "../communication/wifi/WifiManager.h"
 #include "../time/TimeManager.h"
+#include "../mode/media/MediaManager.h"
+#include "../mode/fan/FanManager.h"
 
 class DisplayManager {
 public:
-    DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr);
+    DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr, MediaManager& mediaMgr);
     void begin();
     void drawDefaultScreen(float temperature, float humidity);
-    void updateScrollingText(const String& text);
-    void drawPlayIcon(int x, int y);
     void setQuickControlMode(QuickControlMode mode);
     void showProgress(int value);
+    void animateFan();
 
 private:
     Adafruit_SSD1306 display;
     BluetoothManager& bluetoothManager;
     WifiManager& wifiManager;
     TimeManager& timeManager;
+    MediaManager& mediaManager;
+    FanManager fanManager;
     int screenWidth;
     int screenHeight;
     int scrollPosition = 0;

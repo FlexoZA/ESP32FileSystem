@@ -2,13 +2,15 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 
-DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr) 
+DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr, MediaManager& mediaMgr) 
     : screenWidth(width), 
       screenHeight(height), 
       display(width, height, wire, OLED_RESET),
       bluetoothManager(btManager),
       wifiManager(wifiMgr),
-      timeManager(timeMgr) {  // Initialize the reference
+      timeManager(timeMgr),
+      mediaManager(mediaMgr),
+      fanManager(display) {  // Initialize the reference
 }
 
 void DisplayManager::begin() {
@@ -19,39 +21,6 @@ void DisplayManager::begin() {
     
     display.clearDisplay();
     display.display();
-}
-
-void DisplayManager::updateScrollingText(const String& text) {
-    static unsigned long lastUpdate = 0;
-    unsigned long currentTime = millis();
-    
-    // Get text width for the current font size
-    display.setTextSize(1);
-    int16_t x1, y1;
-    uint16_t textWidth, textHeight;
-    display.getTextBounds(text, 0, 0, &x1, &y1, &textWidth, &textHeight);
-
-    // Only scroll if text is wider than screen
-    if (textWidth > screenWidth) {
-        if (currentTime - lastUpdate >= SCROLL_DELAY) {
-            scrollPosition++;
-            // Reset position when text has scrolled completely
-            if (scrollPosition >= textWidth + screenWidth) {
-                scrollPosition = -screenWidth;
-            }
-            lastUpdate = currentTime;
-        }
-        
-        display.setTextSize(1);
-        display.setCursor(-scrollPosition, 56);  // Bottom position
-        display.print(text);
-    } else {
-        // Center the text if it's shorter than screen width
-        display.setTextSize(1);
-        int16_t centerX = (screenWidth - textWidth) / 2;
-        display.setCursor(centerX, 56);
-        display.print(text);
-    }
 }
 
 void DisplayManager::showProgress(int value) {
@@ -134,8 +103,13 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
         }
     }
 
-    // Bottom: Song Name
-    updateScrollingText("Short text and then there is some longer test to perform");
+    // Bottom: Media Status
+    display.setTextSize(1);
+    String mediaText = mediaManager.getCurrentText();
+    int textWidth = mediaText.length() * 6; // Assuming each character is approximately 6 pixels wide
+    int cursorX = (screenWidth - textWidth) / 2; // Center the text horizontally
+    display.setCursor(cursorX, 52);  // Using the same y-position as before
+    display.print(mediaText);
 
     display.display();
 }

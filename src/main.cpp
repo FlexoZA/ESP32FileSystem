@@ -17,7 +17,7 @@ WifiManager wifiManager;
 InputManager inputManager;
 ModeManager modeManager;
 TimeManager timeManager;
-DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, bluetoothManager, wifiManager, timeManager);
+DisplayManager displayManager(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, bluetoothManager, wifiManager, timeManager, mediaManager);
 SensorManager sensorManager;
 LEDManager ledManager(LED_PIN, NUM_LEDS);
 
