@@ -1,9 +1,5 @@
 #include "FanManager.h"
 
-FanManager::FanManager(Adafruit_SSD1306& disp) : display(disp), fanCenterY(disp.height() / 2) {
-    // Constructor initializes the display reference and calculates the center Y position
-}
-
 void FanManager::animateFan() {
     // Clear the display
     display.clearDisplay();

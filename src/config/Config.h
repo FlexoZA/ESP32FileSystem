@@ -5,7 +5,10 @@
 #define ENCODER_CLK_PIN 27  // CLK GPIO pin for encoder
 #define ENCODER_DT_PIN 14   // DT GPIO pin for encoder
 #define ENCODER_SW_PIN 13   // SW GPIO pin for encoder
+
 #define AD_KEYBOARD_PIN 33   // ADKeyboard analog input pin
+
+#define RELAY 34 // HW-482 relay
 
 // Timing Constants
 #define DEBOUNCE_DELAY 80  // Debounce delay for button

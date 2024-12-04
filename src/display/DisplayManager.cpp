@@ -85,7 +85,7 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
         // Draw time
         showingProgressBar = false;
         display.setTextSize(2);
-        display.setCursor(20, 24);
+        display.setCursor(24, 24);
         display.print(timeManager.getFormattedTime());
     }
 
@@ -110,6 +110,12 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     int cursorX = (screenWidth - textWidth) / 2; // Center the text horizontally
     display.setCursor(cursorX, 52);  // Using the same y-position as before
     display.print(mediaText);
+
+    // FAN: on off status
+    display.setTextSize(1);
+    display.setCursor(0, 28);
+    display.print("fan");
+
 
     display.display();
 }
