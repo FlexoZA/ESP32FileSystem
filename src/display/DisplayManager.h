@@ -19,7 +19,7 @@ private:
     WifiManager& wifiManager;
     TimeManager& timeManager;
     MediaManager& mediaManager;
-    FanManager fanManager;
+    //FanManager fanManager;
     int scrollPosition = 0;
     unsigned long lastScrollTime = 0;
     const int SCROLL_DELAY = 50;  // Scroll speed in milliseconds

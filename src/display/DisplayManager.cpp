@@ -9,8 +9,7 @@ DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothMa
       bluetoothManager(btManager),
       wifiManager(wifiMgr),
       timeManager(timeMgr),
-      mediaManager(mediaMgr),
-      fanManager(display) {  // Initialize the reference
+      mediaManager(mediaMgr) {  // Initialize the reference
 }
 
 void DisplayManager::begin() {
@@ -114,7 +113,8 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // FAN: on off status
     display.setTextSize(1);
     display.setCursor(0, 28);
-    display.print("fan");
+    display.print("FAN:");
+    //display.print(fanManager.isRelayOn() ? "On" : "Off");
 
 
     display.display();

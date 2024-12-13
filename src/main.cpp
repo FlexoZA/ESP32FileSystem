@@ -119,9 +119,9 @@ void loop() {
         sensorManager.getHumidity()
     );
     
-    // Handle quick mode change (Button 4)
+    // Handle quick mode change (Button 1)
     int pressedButton = inputManager.getADKeyPressed();
-    if (pressedButton == 4) { // Button 4
+    if (pressedButton == 1) { // Button 1
         modeManager.setMediaMode(!modeManager.isMediaMode());
     }
 
