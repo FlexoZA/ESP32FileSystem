@@ -29,6 +29,10 @@ private:
     unsigned long progressBarStartTime = 0;
     int progressValue = 0;
     static const unsigned long PROGRESS_BAR_DURATION = 3000; // 3 seconds
+    bool fanState = false;
+    bool relayState = false;  // Track relay state
+    unsigned long lastFanAnimationTime = 0;
+    uint8_t fanAnimationFrame = 0;
 
 public:
     DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr, MediaManager& mediaMgr);
@@ -36,6 +40,7 @@ public:
     void showProgress(int value);
     void drawDefaultScreen(float temperature, float humidity);
     void setQuickControlMode(QuickControlMode mode);
+    void setRelayState(bool state) { relayState = state; }  // Set relay state
 };
 
 #endif // DISPLAY_MANAGER_H

@@ -113,9 +113,7 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     // FAN: on off status
     display.setTextSize(1);
     display.setCursor(0, 28);
-    display.print("FAN:");
-    //display.print(fanManager.isRelayOn() ? "On" : "Off");
-
+    display.print(relayState ? "ON" : "OFF");
 
     display.display();
 }

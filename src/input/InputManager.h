@@ -25,6 +25,7 @@ private:
     int adKeyValue;
     int lastAdKey;
     unsigned long lastAdKeyDebounceTime;
+    bool relayState;  // Track relay state
     
     std::function<void()> quickModeChangeCallback;
     
@@ -38,6 +39,8 @@ public:
     bool isButtonReleased();
     int getADKeyPressed();
     void setQuickModeChangeCallback(std::function<void()> callback);
+    bool getRelayState() const { return relayState; }
+    void toggleRelay();
 };
 
 #endif

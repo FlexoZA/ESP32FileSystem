@@ -121,7 +121,7 @@ void loop() {
     
     // Handle quick mode change (Button 1)
     int pressedButton = inputManager.getADKeyPressed();
-    if (pressedButton == 1) { // Button 1
+    if (pressedButton == 1) { // Button 1 (was Button 4)
         modeManager.setMediaMode(!modeManager.isMediaMode());
     }
 
@@ -133,21 +133,21 @@ void loop() {
     }
 
     // Handle other media controls
-    if (pressedButton != -1 && pressedButton != 4) {
+    if (pressedButton != -1 && pressedButton != 1) { // Changed from != 4 to != 1
         switch (pressedButton) {
-            case 3: // Previous/Restart Track (Button 1)
+            case 3: // Previous Track
                 if (bluetoothManager.isDeviceConnected()) {
                     mediaManager.handlePreviousButton();
                 }
                 break;
                 
-            case 2:  // Next Track (Button 2)
+            case 2:  // Next Track
                 if (bluetoothManager.isDeviceConnected()) {
                     mediaManager.nextTrack();
                 }
                 break;
                 
-            case 1: // Play/Pause (Button 3)
+            case 4: // Play/Pause (was Button 1)
                 if (bluetoothManager.isDeviceConnected()) {
                     mediaManager.togglePlayPause();
                 }

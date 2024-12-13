@@ -8,7 +8,7 @@
 
 #define AD_KEYBOARD_PIN 33   // ADKeyboard analog input pin
 
-#define RELAY 34 // HW-482 relay
+#define RELAY 25 // HW-482 relay
 
 // Timing Constants
 #define DEBOUNCE_DELAY 80  // Debounce delay for button
