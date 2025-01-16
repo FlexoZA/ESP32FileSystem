@@ -98,6 +98,7 @@ void setup() {
 
 void loop() {
     inputManager.update();
+    displayManager.setRelayState(inputManager.getRelayState());
     mediaManager.update();
     sensorManager.update();
     bluetoothManager.update();
@@ -133,7 +134,7 @@ void loop() {
     }
 
     // Handle other media controls
-    if (pressedButton != -1 && pressedButton != 1) { // Changed from != 4 to != 1
+    if (pressedButton != -1 && pressedButton != 1) {
         switch (pressedButton) {
             case 3: // Previous Track
                 if (bluetoothManager.isDeviceConnected()) {

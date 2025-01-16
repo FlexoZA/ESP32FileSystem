@@ -103,17 +103,26 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     }
 
     // Bottom: Media Status
-    display.setTextSize(1);
-    String mediaText = mediaManager.getCurrentText();
-    int textWidth = mediaText.length() * 6; // Assuming each character is approximately 6 pixels wide
-    int cursorX = (screenWidth - textWidth) / 2; // Center the text horizontally
-    display.setCursor(cursorX, 52);  // Using the same y-position as before
-    display.print(mediaText);
+    if (!isShowingProgress) {
+        display.setTextSize(1);
+        String mediaText = mediaManager.getCurrentText();
+        int textWidth = mediaText.length() * 6; // Assuming each character is approximately 6 pixels wide
+        int cursorX = (screenWidth - textWidth) / 2; // Center the text horizontally
+        display.setCursor(cursorX, 52);  // Using the same y-position as before
+        display.print(mediaText);
+    } else {
+        display.setTextSize(1);
+        display.setCursor(10, 52);
+        String adjustText = ("Adjusting " + String(currentQuickMode == QuickControlMode::VOLUME ? "Volume" : "Brightness"));
+        display.print(adjustText);
+    }
 
     // FAN: on off status
-    display.setTextSize(1);
-    display.setCursor(0, 28);
-    display.print(relayState ? "ON" : "OFF");
+    if (!isShowingProgress) {
+        display.setTextSize(1);
+        display.setCursor(0, 28);
+        display.print(relayState ? "ON" : "OFF");
+    }
 
     display.display();
 }
