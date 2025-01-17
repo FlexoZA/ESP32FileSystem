@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <ESP32Encoder.h>
+#include <functional>
 #include "config/Config.h"
 
 class InputManager {
@@ -20,6 +21,14 @@ private:
     bool allowButtonPress;
     unsigned long lastDebounceTime;
 
+    // ADKeyboard variables
+    int adKeyValue;
+    int lastAdKey;
+    unsigned long lastAdKeyDebounceTime;
+    bool relayState;  // Track relay state
+    
+    std::function<void()> quickModeChangeCallback;
+    
 public:
     InputManager();
     void begin();
@@ -28,6 +37,10 @@ public:
     void setLimits(int32_t min, int32_t max);
     bool isButtonPressed();
     bool isButtonReleased();
+    int getADKeyPressed();
+    void setQuickModeChangeCallback(std::function<void()> callback);
+    bool getRelayState() const { return relayState; }
+    void toggleRelay();
 };
 
 #endif

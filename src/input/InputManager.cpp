@@ -8,19 +8,21 @@ InputManager::InputManager() :
     buttonState(HIGH),
     wasButtonPressed(false),
     allowButtonPress(true),
-    lastDebounceTime(0)
+    lastDebounceTime(0),
+    relayState(false)  // Initialize relay state to off
 {
 }
 
 void InputManager::begin() {
-    // Initialize encoder
     encoder.attachSingleEdge(ENCODER_DT_PIN, ENCODER_CLK_PIN);
     encoder.clearCount();
-
-    // Set up encoder button pin
     pinMode(ENCODER_SW_PIN, INPUT_PULLUP);
-
-    Serial.println("Input Manager initialized.");
+    pinMode(AD_KEYBOARD_PIN, INPUT);
+    pinMode(RELAY, OUTPUT);  // Set relay pin as output
+    digitalWrite(RELAY, LOW);  // Initialize relay to OFF
+    adKeyValue = -1;
+    lastAdKey = -1;
+    lastAdKeyDebounceTime = 0;
 }
 
 void InputManager::update() {
@@ -68,6 +70,54 @@ void InputManager::update() {
     }
 
     lastButtonState = reading;
+
+    // Handle ADKeyboard with improved debouncing
+    int adReading = analogRead(AD_KEYBOARD_PIN);
+    int currentKey = -1;
+    
+    // Map analog values to buttons
+    if (adReading < 100) currentKey = 1;        // Right (Quick Mode)
+    else if (adReading < 500) currentKey = 2;   // Up (Next Track)
+    else if (adReading < 1500) currentKey = 3;  // Down (Previous Track)
+    else if (adReading < 2500) currentKey = 4;  // Left (Play/Pause)
+    else if (adReading < 3500) currentKey = 5;  // Select
+    
+    // Quick mode change handling (Button 1)
+    if (currentKey == 1 && lastAdKey != 1) {
+        if (quickModeChangeCallback) {
+            quickModeChangeCallback();
+        }
+    }
+
+    // Only update if the reading is different
+    if (currentKey != lastAdKey) {
+        lastAdKeyDebounceTime = millis();
+    }
+
+    if ((millis() - lastAdKeyDebounceTime) > DEBOUNCE_DELAY) {
+        // Only register a new press if we're coming from no press
+        if (currentKey != -1 && adKeyValue == -1) {
+            adKeyValue = currentKey;
+            if (adKeyValue == 5) {  // Button 5 pressed
+                toggleRelay();  // Toggle the relay
+                Serial.print("Relay state changed to: ");
+                Serial.println(relayState ? "ON" : "OFF");
+            }
+            if (adKeyValue != -1) {
+                Serial.print("ADKey pressed: ");
+                Serial.println(adKeyValue);
+            }
+        } else if (currentKey == -1) {
+            adKeyValue = -1; // Reset when button is released
+        }
+    }
+    
+    lastAdKey = currentKey;
+}
+
+void InputManager::toggleRelay() {
+    relayState = !relayState;  // Toggle the state
+    digitalWrite(RELAY, relayState ? HIGH : LOW);  // Set the relay output
 }
 
 int32_t InputManager::getCurrentValue() const {
@@ -90,4 +140,12 @@ bool InputManager::isButtonPressed() {
 
 bool InputManager::isButtonReleased() {
     return (buttonState == HIGH && lastButtonState == HIGH);
+}
+
+int InputManager::getADKeyPressed() {
+    return adKeyValue;
+}
+
+void InputManager::setQuickModeChangeCallback(std::function<void()> callback) {
+    quickModeChangeCallback = callback;
 }

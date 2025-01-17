@@ -2,12 +2,14 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 
-DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr) 
+DisplayManager::DisplayManager(int width, int height, TwoWire *wire, BluetoothManager& btManager, WifiManager& wifiMgr, TimeManager& timeMgr, MediaManager& mediaMgr) 
     : screenWidth(width), 
       screenHeight(height), 
       display(width, height, wire, OLED_RESET),
       bluetoothManager(btManager),
-      wifiManager(wifiMgr) {  // Initialize the reference
+      wifiManager(wifiMgr),
+      timeManager(timeMgr),
+      mediaManager(mediaMgr) {  // Initialize the reference
 }
 
 void DisplayManager::begin() {
@@ -20,48 +22,11 @@ void DisplayManager::begin() {
     display.display();
 }
 
-void DisplayManager::updateScrollingText(const String& text) {
-    static unsigned long lastUpdate = 0;
-    unsigned long currentTime = millis();
-    
-    // Get text width for the current font size
-    display.setTextSize(1);
-    int16_t x1, y1;
-    uint16_t textWidth, textHeight;
-    display.getTextBounds(text, 0, 0, &x1, &y1, &textWidth, &textHeight);
-
-    // Only scroll if text is wider than screen
-    if (textWidth > screenWidth) {
-        if (currentTime - lastUpdate >= SCROLL_DELAY) {
-            scrollPosition++;
-            // Reset position when text has scrolled completely
-            if (scrollPosition >= textWidth + screenWidth) {
-                scrollPosition = -screenWidth;
-            }
-            lastUpdate = currentTime;
-        }
-        
-        display.setTextSize(1);
-        display.setCursor(-scrollPosition, 54);  // Bottom position
-        display.print(text);
-    } else {
-        // Center the text if it's shorter than screen width
-        display.setTextSize(1);
-        int16_t centerX = (screenWidth - textWidth) / 2;
-        display.setCursor(centerX, 54);
-        display.print(text);
-    }
-}
-
-void DisplayManager::drawPlayIcon(int x, int y) {
-    int x1 = x;
-    int y1 = y;
-    int x2 = x;
-    int y2 = y + 8;    // Height matches text size 1
-    int x3 = x + 6;    // Width slightly less than height
-    int y3 = y + 4;    // Midpoint of the height
-
-    display.fillTriangle(x1, y1, x2, y2, x3, y3, SSD1306_WHITE);
+void DisplayManager::showProgress(int value) {
+    Serial.printf("Progress set to: %d%%\n", value);  // Add debug print
+    progressValue = constrain(value, 0, 100);
+    showingProgressBar = true;
+    progressBarStartTime = millis();
 }
 
 void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
@@ -72,17 +37,19 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     display.setTextSize(1);
     display.setCursor(0, 0);
     display.print(temperature, 1);
+    //display.print(20); // Remove if sensor is connected
     display.print("C - ");
     display.print((int)humidity);
+    //display.print((int) 20); // Remove if sensor is connected
     display.print("%");
 
     // Bluetooth connection
     display.setTextSize(1);
     display.setCursor(80, 0); 
-    if (bluetoothManager.isConnected()) {
+    if (bluetoothManager.isDeviceConnected()) {
         display.print("BT");
     } else if (bluetoothManager.getBlinkState()) {
-        display.print("BT");  // Blink by only showing when blinkState is true
+        display.print("BT");
     }
 
     // WIFI connection
@@ -91,25 +58,75 @@ void DisplayManager::drawDefaultScreen(float temperature, float humidity) {
     if (wifiManager.isConnected()) {
         display.print("WIFI");
     } else if (wifiManager.getBlinkState()) {
-        display.print("WIFI");  // Blink by only showing when blinkState is true
+        display.print("WIFI");
     }
 
-    // Center: Time in larger text
-    display.setTextSize(2);
-    display.setCursor(20, 24);
-    display.print("14:30");
+    // Center: Either Time or Progress Bar
+    unsigned long currentTime = millis();
+    bool isShowingProgress = showingProgressBar && (currentTime - progressBarStartTime < PROGRESS_BAR_DURATION);
 
-    // Play Icon
-    drawPlayIcon(0, 28);
+    if (isShowingProgress) {
+        // Draw progress bar
+        int barWidth = 88;
+        int barHeight = 16;
+        int barX = 20;
+        int barY = 24;
+        
+        display.drawRect(barX, barY, barWidth, barHeight, SSD1306_WHITE);
+        int fillWidth = (barWidth - 4) * progressValue / 100;
+        display.fillRect(barX + 2, barY + 2, fillWidth, barHeight - 4, SSD1306_WHITE);
+        
+        display.setTextSize(1);
+        display.setCursor(barX + (barWidth/2) - 10, barY + 4);
+        display.print(progressValue);
+        display.print("%");
+    } else {
+        // Draw time
+        showingProgressBar = false;
+        display.setTextSize(2);
+        display.setCursor(24, 24);
+        display.print(timeManager.getFormattedTime());
+    }
 
-    // Mode display 
-    display.setTextSize(1);
-    display.setCursor(90, 28);
-    display.print("(LED)");
+    // Quick Control Mode indicator - only show if progress bar is not visible
+    if (!isShowingProgress) {
+        display.setCursor(90, 28);
+        display.setTextSize(1);
+        switch(currentQuickMode) {
+            case QuickControlMode::VOLUME:
+                display.print("[VOL]");
+                break;
+            case QuickControlMode::BRIGHTNESS:
+                display.print("[BRI]");
+                break;
+        }
+    }
 
-    // Bottom: Song Name
-    updateScrollingText("Short text and then there is some longer test to perform");
+    // Bottom: Media Status
+    if (!isShowingProgress) {
+        display.setTextSize(1);
+        String mediaText = mediaManager.getCurrentText();
+        int textWidth = mediaText.length() * 6; // Assuming each character is approximately 6 pixels wide
+        int cursorX = (screenWidth - textWidth) / 2; // Center the text horizontally
+        display.setCursor(cursorX, 52);  // Using the same y-position as before
+        display.print(mediaText);
+    } else {
+        display.setTextSize(1);
+        display.setCursor(10, 52);
+        String adjustText = ("Adjusting " + String(currentQuickMode == QuickControlMode::VOLUME ? "Volume" : "Brightness"));
+        display.print(adjustText);
+    }
 
-    // Move display.display() here to update everything at once
+    // FAN: on off status
+    if (!isShowingProgress) {
+        display.setTextSize(1);
+        display.setCursor(0, 28);
+        display.print(relayState ? "ON" : "OFF");
+    }
+
     display.display();
+}
+
+void DisplayManager::setQuickControlMode(QuickControlMode mode) {
+    currentQuickMode = mode;
 }

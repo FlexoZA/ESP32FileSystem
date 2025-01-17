@@ -3,53 +3,40 @@
 
 #include <Arduino.h>
 #include <BLEDevice.h>
-#include <BLEServer.h>
 #include <BLEUtils.h>
+#include <BLEServer.h>
+#include <BLEHIDDevice.h>
 
-// Forward declare the callback class
-class MyServerCallbacks;
-
-class BluetoothManager {
+class BluetoothManager : public BLEServerCallbacks {
 private:
-    friend class MyServerCallbacks;  // Declare friendship
-    bool connected = false;
-    unsigned long lastBlinkTime = 0;
-    bool blinkState = false;
-    static const unsigned long BLINK_INTERVAL = 500;
-
-    // Add BLE components
-    BLEServer* pServer = nullptr;
-    BLEService* pService = nullptr;
-    BLECharacteristic* pMediaTitleCharacteristic = nullptr;
+    BLEServer* pServer;
+    BLEHIDDevice* hid;
+    BLECharacteristic* mediaControl;
+    bool deviceConnected;
+    bool oldDeviceConnected;
+    bool blinkState;
+    unsigned long lastBlinkTime;
     
-    // UUID constants
-    static const char* SERVICE_UUID;
-    static const char* MEDIA_TITLE_CHARACTERISTIC_UUID;
-
+    static const uint8_t MEDIA_KEYS_REPORT_MAP[];
+    static const uint8_t DEFAULT_VOLUME_PERCENT = 30;  // Adjust this value as needed
+    void setInitialVolume();
+    void setVolumeToPercent(uint8_t targetPercent);
+    
 public:
-    BluetoothManager() = default;
+    BluetoothManager();
     void begin();
     void update();
-    bool isConnected() const { return connected; }
-    bool getBlinkState() const { return blinkState; }
-    String getCurrentTrack() const;
-};
-
-// Define the callback class in the header
-class MyServerCallbacks: public BLEServerCallbacks {
-private:
-    BluetoothManager& manager;
-
-public:
-    MyServerCallbacks(BluetoothManager& mgr) : manager(mgr) {}
-
-    void onConnect(BLEServer* pServer) override {
-        manager.connected = true;
-    }
-
-    void onDisconnect(BLEServer* pServer) override {
-        manager.connected = false;
-    }
+    bool isDeviceConnected() const;
+    bool getBlinkState() const;
+    void playPause();
+    void nextTrack();
+    void previousTrack();
+    void restartTrack();
+    void volumeUp();
+    void volumeDown();
+    
+    void onConnect(BLEServer* pServer) override;
+    void onDisconnect(BLEServer* pServer) override;
 };
 
 #endif
